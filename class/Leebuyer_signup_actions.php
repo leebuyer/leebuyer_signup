@@ -104,7 +104,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__); //當無法執行時顯示錯誤訊息
 
         //取得最後新增資料的流水編號
-        $id = $xoopsDB->getInsertId();
+        $id = $xoopsDB->getInsertId(); //只有在寫入時才用到，取得當下寫入資料的流水號
         return $id;
     }
 
