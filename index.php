@@ -1,9 +1,9 @@
 <?php
 // 如「模組目錄」= signup，則「首字大寫模組目錄」= Signup
 // 如「資料表名」= actions，則「模組物件」= Actions
-use Xmf\Request;
-use XoopsModules\Tadtools\Utility;
+use Xmf\Request; //是用來接收並過濾各種外來變數用的物件
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
+use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
 require_once __DIR__ . '/header.php';
@@ -25,7 +25,8 @@ switch ($op) {
     //新增資料
     case 'leebuyer_signup_actions_store':
         $id = Leebuyer_signup_actions::store();
-        header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        //header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功建立活動！");
         exit;
 
     //修改用表單
@@ -37,7 +38,8 @@ switch ($op) {
     //更新資料
     case 'leebuyer_signup_actions_update':
         Leebuyer_signup_actions::update($id);
-        header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        //header("location: {$_SERVER['PHP_SELF']}?id=$id");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "已成功修改活動！");
         exit;
 
     //刪除資料
@@ -48,7 +50,7 @@ switch ($op) {
 
     default:
         if (empty($id)) {
-            Leebuyer_signup_actions::index();
+            Leebuyer_signup_actions::index(); //Leebuyer_signup_actions 是類別（class），:: 是呼叫類別的靜態方法（無須用new去進行實例化），index()就是類別的靜態方法（函式）
             $op = 'leebuyer_signup_actions_index';
         } else {
             Leebuyer_signup_actions::show($id);
