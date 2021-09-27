@@ -7,7 +7,7 @@ use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
 require_once __DIR__ . '/header.php';
-$GLOBALS['xoopsOption']['template_main'] = 'leebuyer_signup_index.tpl';
+$GLOBALS['xoopsOption']['template_main'] = 'leebuyer_signup_index.tpl'; //寫這段時必須到xoops_version.php設定檔註冊
 require_once XOOPS_ROOT_PATH . '/header.php';
 
 /*-----------變數過濾----------*/
