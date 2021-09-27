@@ -77,7 +77,7 @@
     </div>
 
     <{$token_form}>
-    <input type="hidden" name="uid" value="<{$uid}>">
+    <input type="hidden" name="uid" value="<{$uid}>">   <!--由leebuyer_signup_actions.php之create送來，1.global $xoopsUser;2.$uid = $xoopsUser ? $xoopsUser->uid() : 0;3.$xoopsTpl->assign("uid", $uid);-->>
     <input type="hidden" name="id" value="<{$id}>">
     <input type="hidden" name="op" value="<{$next_op}>">
     <div class="bar">

@@ -5,7 +5,7 @@
 namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Tadtools\FormValidator;
-use XoopsModules\Tadtools\My97DatePicker;
+use XoopsModules\Tadtools\My97DatePicker; //tadtool內之小月曆
 use XoopsModules\Tadtools\Utility;
 
 class Leebuyer_signup_actions//命名與檔名相同
@@ -29,7 +29,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
         }
 
-        //抓取預設值
+        //抓取預設值(抓取該活動預設值以及設定表單的預設值)
         $db_values = empty($id) ? [] : self::get($id);
         $db_values['number'] = empty($id) ? 50 : $db_values['number'];
         $db_values['enable'] = empty($id) ? 1 : $db_values['enable'];
@@ -55,7 +55,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         $uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign("uid", $uid);
 
-        My97DatePicker::render();
+        My97DatePicker::render(); //把小月曆所需之javascript與css引入，另在樣板之日期時間input內加入onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss' , startDate:'%y-%M-%d %H:%m:%s}'})"
     }
 
     //新增資料
@@ -77,7 +77,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             $$var_name = $myts->addSlashes($var_val); //替特殊符號加入脫逸斜線，以順利存入資料庫中
         }
 
-        //過濾數字
+        //寫入時過濾數字
         $uid = (int) $uid;
         $number = (int) $number;
         $enable = (int) $enable;
