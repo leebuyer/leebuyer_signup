@@ -227,10 +227,10 @@ class Leebuyer_signup_actions//命名與檔名相同
             // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
             // $data['數字欄'] = (int) $data['數字欄'];
 
-            if ($_SESSION['api_mode'] or $auto_key) {
+            if ($_SESSION['api_mode'] or $auto_key) { //api_mode，$auto_key控制索引值要採取哪一種
                 $data_arr[] = $data;
             } else {
-                $data_arr[$data['id']] = $data;
+                $data_arr[$data['id']] = $data; //用流水號當作索引值
             }
         }
         return $data_arr;
