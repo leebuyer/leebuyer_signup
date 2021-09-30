@@ -124,10 +124,10 @@ class Leebuyer_signup_actions//命名與檔名相同
 
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
         foreach ($data as $col_name => $col_val) { //把一維陣列一筆一筆抽出來
-            $col_val = $myts->htmlSpecialChars($col_val); //之後沒有要針對每個變數做什麼事，而是直接送到樣板，故不用$$var_name = $myts->htmlSpecialChars($var_val);
+            //$col_val = $myts->htmlSpecialChars($col_val); //之後沒有要針對每個變數做什麼事，而是直接送到樣板，故不用$$var_name = $myts->htmlSpecialChars($var_val);
 
             //過濾讀出的變數值 displayTarea($text, $html=0, $smiley=1, $xcode=1, $image=1, $br=1);
-            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
+            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);(非所件即所得編輯器用參數0, 1, 0, 1, 1。用所件即所得編輯器用參數1, 0, 0, 0, 0)
             // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
 
             //過濾"讀出"的變數值
