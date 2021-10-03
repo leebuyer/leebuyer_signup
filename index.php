@@ -3,6 +3,7 @@
 // 如「資料表名」= actions，則「模組物件」= Actions
 use Xmf\Request; //是用來接收並過濾各種外來變數用的物件
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
+use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
 use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
@@ -13,16 +14,17 @@ require_once XOOPS_ROOT_PATH . '/header.php';
 /*-----------變數過濾----------*/
 $op = Request::getString('op');
 $id = Request::getInt('id');
+$action_id = Request::getInt('action_id');
 
 /*-----------執行動作判斷區----------*/
 switch ($op) {
 
-    //新增表單
+    //新增活動表單
     case 'leebuyer_signup_actions_create':
         Leebuyer_signup_actions::create();
         break;
 
-    //新增資料
+    //新增活動資料
     case 'leebuyer_signup_actions_store':
         $id = Leebuyer_signup_actions::store();
         //header("location: {$_SERVER['PHP_SELF']}?id=$id");
@@ -45,7 +47,20 @@ switch ($op) {
     //刪除資料
     case 'leebuyer_signup_actions_destroy':
         Leebuyer_signup_actions::destroy($id);
-        header("location: {$_SERVER['PHP_SELF']}");
+        //header("location: {$_SERVER['PHP_SELF']}");
+        redirect_header($_SERVER['PHP_SELF'], 3, "已成功刪除活動！");
+        exit;
+
+    //新增報名表單
+    case 'leebuyer_signup_data_create':
+        Leebuyer_signup_data::create($action_id);
+        break;
+
+    //新增報名資料
+    case 'leebuyer_signup_data_store':
+        $id = Leebuyer_signup_data::store();
+        //header("location: {$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id");
+        redirect_header("{$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id", 3, "已成功新增報名！");
         exit;
 
     default:

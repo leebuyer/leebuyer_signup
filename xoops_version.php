@@ -36,7 +36,7 @@ $modversion['system_menu'] = 1;
 
 //---模組資料表架構---//
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-$modversion['tables'] = ['leebuyer_signup_actions'];//$modversion['tables']是反安裝時才會用到
+$modversion['tables'] = ['leebuyer_signup_actions', 'leebuyer_signup_data', 'leebuyer_signup_data_center']; //$modversion['tables']是反安裝時才會用到
 
 //---後台管理介面設定---//
 $modversion['hasAdmin'] = 1;
@@ -87,7 +87,6 @@ $modversion['templates'][] = ['file' => 'leebuyer_signup_index.tpl', 'descriptio
 
 //---通知---//
 // $modversion['hasNotification'] = 1;
-
 
 //xoops_version.php 的語系檔一律位於 language/語系/modinfo.php 中（不可自訂檔案或改檔名）
 //$modversion['config'] 偏好設定，一定要用語系。

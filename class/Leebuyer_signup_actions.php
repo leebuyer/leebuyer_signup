@@ -6,6 +6,7 @@ namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\My97DatePicker; //tadtool內之小月曆
+use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
 
 class Leebuyer_signup_actions//命名與檔名相同
@@ -139,6 +140,8 @@ class Leebuyer_signup_actions//命名與檔名相同
 
             $xoopsTpl->assign($col_name, $col_val);
         }
+        $SweetAlert = new SweetAlert();
+        $SweetAlert->render("del_action", "index.php?op=leebuyer_signup_actions_destroy&id=", 'id');
     }
 
     //更新某一筆資料
@@ -185,6 +188,11 @@ class Leebuyer_signup_actions//命名與檔名相同
     {
         global $xoopsDB;
 
+        //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
+        if (!$_SESSION['leebuyer_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
         if (empty($id)) {
             return;
         }
@@ -226,6 +234,10 @@ class Leebuyer_signup_actions//命名與檔名相同
             // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
             // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
             // $data['數字欄'] = (int) $data['數字欄'];
+
+            $data['title'] = $myts->htmlSpecialChars($data['title']);
+            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
+            $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
 
             if ($_SESSION['api_mode'] or $auto_key) { //api_mode，$auto_key控制索引值要採取哪一種
                 $data_arr[] = $data;
