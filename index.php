@@ -63,6 +63,11 @@ switch ($op) {
         redirect_header("{$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id", 3, "已成功新增報名！");
         exit;
 
+    //顯示報名表
+    case 'leebuyer_signup_data_show':
+        Leebuyer_signup_data::show($id);
+        break;
+
     default:
         if (empty($id)) {
             Leebuyer_signup_actions::index(); //Leebuyer_signup_actions 是類別（class），:: 是呼叫類別的靜態方法（無須用new去進行實例化），index()就是類別的靜態方法（函式）
