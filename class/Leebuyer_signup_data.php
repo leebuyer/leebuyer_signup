@@ -6,6 +6,7 @@ namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
 use XoopsModules\Tadtools\FormValidator;
+use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\TadDataCenter;
 use XoopsModules\Tadtools\Utility;
 
@@ -70,6 +71,7 @@ class Leebuyer_signup_data
         $xoopsTpl->assign("uid", $uid);
 
         $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        $TadDataCenter->set_col('id', $id); //修改時必須告知綁定方法，當初是用id綁定並抓出編號，綁定上了就會把預設值還原回來
         $signup_form = $TadDataCenter->strToForm($action['setup']);
         $xoopsTpl->assign('signup_form', $signup_form);
     }
@@ -135,7 +137,7 @@ class Leebuyer_signup_data
         $TadDataCenter = new TadDataCenter('leebuyer_signup');
         $TadDataCenter->set_col('id', $id); //此id為重新迴圈跑完後之id
         $tdc = $TadDataCenter->getData();
-        var_dump($tdc);
+        //Utility::dd($tdc);
         $xoopsTpl->assign('tdc', $tdc);
 
         $action = Leebuyer_signup_actions::get($action_id); //跑5次迴圈其中一個就是$action_id
@@ -150,12 +152,18 @@ class Leebuyer_signup_data
             $action[$col_name] = $col_val; //再塞回陣列
         }
         $xoopsTpl->assign('action', $action);
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign("now_uid", $now_uid);
+
+        $SweetAlert = new SweetAlert();
+        $SweetAlert->render("del_data", "index.php?op=tad_signup_data_destroy&action_id=<{$action_id}>&id=", 'id'); //要刪的是報名編號，非活動編號，故將會變動的id變數放在後面且把值移除以javascript靈活保持彈性，以接當下的值傳進去
     }
 
     //更新某一筆資料
     public static function update($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
 
         //XOOPS表單安全檢查
         Utility::xoops_security_check();
@@ -166,12 +174,23 @@ class Leebuyer_signup_data
             $$var_name = $myts->addSlashes($var_val);
         }
 
+        $action_id = (int) $action_id;
+        $uid = (int) $uid;
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+
         $sql = "update `" . $xoopsDB->prefix("leebuyer_signup_data") . "` set
-        `欄位1` = '{$欄位1值}',
-        `欄位2` = '{$欄位2值}',
-        `欄位3` = '{$欄位3值}'
-        where `id` = '$id'";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        `signup_date` = now()
+
+        where `id` = '$id' and `uid` =' $now_uid'";
+        if ($xoopsDB->queryF($sql)) {
+            //取得資料陣列
+            $TadDataCenter = new TadDataCenter('leebuyer_signup');
+            $TadDataCenter->set_col('id', $id); //此id為重新迴圈跑完後之id
+            $tdc = $TadDataCenter->getData();
+        } else {
+            Utility::web_error($sql, __FILE__, __LINE__);
+        }
 
         return $id;
     }
@@ -179,15 +198,23 @@ class Leebuyer_signup_data
     //刪除某筆資料資料
     public static function destroy($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
 
         if (empty($id)) {
             return;
         }
 
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+
         $sql = "delete from `" . $xoopsDB->prefix("leebuyer_signup_data") . "`
-        where `id` = '{$id}'";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        where `id` = '{$id}' and `uid` = '$now_uid'";
+        if ($xoopsDB->queryF($sql)) {
+            $TadDataCenter = new TadDataCenter('leebuyer_signup');
+            $TadDataCenter->set_col('id', $id);
+            $TadDataCenter->delData();
+        } else {
+            Utility::web_error($sql, __FILE__, __LINE__);
+        }
     }
 
     //以流水號取得某筆資料

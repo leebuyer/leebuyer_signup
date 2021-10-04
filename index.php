@@ -68,6 +68,26 @@ switch ($op) {
         Leebuyer_signup_data::show($id);
         break;
 
+    //修改報名表單
+    case 'leebuyer_signup_data_edit':
+        Leebuyer_signup_data::create($action_id, $id);
+        $op = 'leebuyer_signup_data_create';
+        break;
+
+    //更新報名資料
+    case 'leebuyer_signup_data_update':
+        Leebuyer_signup_data::update($id);
+        //header("location: {$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id");
+        redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_data_show&id=$id", 3, "已成功修改報名資料！");
+        exit;
+
+    //刪除報名資料
+    case 'leebuyer_signup_data_destroy':
+        Leebuyer_signup_data::destroy($id);
+        //header("location: {$_SERVER['PHP_SELF']?id=$action_id}");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功刪除報名資料！");
+        exit;
+
     default:
         if (empty($id)) {
             Leebuyer_signup_actions::index(); //Leebuyer_signup_actions 是類別（class），:: 是呼叫類別的靜態方法（無須用new去進行實例化），index()就是類別的靜態方法（函式）
