@@ -85,7 +85,7 @@ class Leebuyer_signup_data
 
         $myts = \MyTextSanitizer::getInstance();
 
-        foreach ($_POST as $var_name => $var_val) {
+        foreach ($_POST as $var_name => $var_val) { //把post傳來的東西過濾，完後塞回原來變數值
             $$var_name = $myts->addSlashes($var_val);
         }
 
@@ -108,7 +108,7 @@ class Leebuyer_signup_data
 
         //儲存資料
         $TadDataCenter = new TadDataCenter('leebuyer_signup');
-        $TadDataCenter->set_col($id, $id);
+        $TadDataCenter->set_col('id', $id);
         $TadDataCenter->saveData();
 
         return $id;
@@ -127,21 +127,22 @@ class Leebuyer_signup_data
         $data = self::get($id); //資料庫把資料抓出來
 
         $myts = \MyTextSanitizer::getInstance();
+        //報名
         foreach ($data as $col_name => $col_val) {
-            $col_val = $myts->htmlSpecialChars($col_val);
+            $col_val = $myts->htmlSpecialChars($col_val); //此可過濾數字跟文字
             $xoopsTpl->assign($col_name, $col_val);
             $$col_name = $col_val; //把過濾完的值指派給當初這個變數(跑$$col_name這一行即會跑5次迴圈，產生leebuyer_signup_dara資料表內的5個值(變數)到樣板檔，重組回來成單一個變數之意)
         }
 
         //取得資料陣列
-        $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        $TadDataCenter = new TadDataCenter('leebuyer_signup'); //leebuyer_signup目錄名稱
         $TadDataCenter->set_col('id', $id); //此id為重新迴圈跑完後之id
-        $tdc = $TadDataCenter->getData();
+        $tdc = $TadDataCenter->getData(); //getData()取得綁定的相關資料，現在是綁定id的相關資料
         //Utility::dd($tdc);
         $xoopsTpl->assign('tdc', $tdc);
 
+        //活動
         $action = Leebuyer_signup_actions::get($action_id); //跑5次迴圈其中一個就是$action_id
-
         foreach ($action as $col_name => $col_val) {
             //過濾讀出的變數值
             if ($col_name == 'detail') {
