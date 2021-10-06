@@ -141,7 +141,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             $xoopsTpl->assign($col_name, $col_val);
         }
         $SweetAlert = new SweetAlert();
-        $SweetAlert->render("del_action", "index.php?op=leebuyer_signup_actions_destroy&id=", 'id');
+        $SweetAlert->render("del_action", "index.php?op=leebuyer_signup_actions_destroy&id=", 'id'); //del_action是javascript函數的名字，index.php?op=leebuyer_signup_actions_destroy&id="是原先刪除的聯結，d="後面因是活的所以不要寫值，id是參數名稱。在樣板刪除連結處要帶入javascript:del_action('<{$id}>')
     }
 
     //更新某一筆資料
@@ -242,7 +242,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             if ($_SESSION['api_mode'] or $auto_key) { //api_mode，$auto_key控制索引值要採取哪一種
                 $data_arr[] = $data;
             } else {
-                $data_arr[$data['id']] = $data; //用流水號當作索引值
+                $data_arr[$data['id']] = $data; //用活動流水號(id編號)當作索引值
             }
         }
         return $data_arr;

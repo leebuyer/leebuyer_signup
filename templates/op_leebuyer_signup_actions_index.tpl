@@ -23,7 +23,7 @@
                     <{if $smarty.session.leebuyer_signup_adm}>
                         <a href="index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-xs btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
                     <{/if}>
-                    <{if $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>
+                    <{if $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>   <{*end_date時間不能做比較，用strtotime把日期轉換成時間戳記*}>
                         <a href="index.php?op=leebuyer_signup_data_create&action_id=<{$action.id}>" class="btn btn-xs btn-info"><i class="fa fa-plus" aria-hidden="true"></i>立即報名</a>
                     <{/if}>
                 </if>
@@ -35,6 +35,6 @@
 
 <{if $smarty.session.leebuyer_signup_adm}>
     <div class="bar">
-        <a href="index.php?op=leebuyer_signup_actions_create" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>新增活動</a>
+        <a href="index.php?op=leebuyer_signup_actions_create" class="btn btn-xs btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>新增活動</a>
     </div>
 <{/if}>
