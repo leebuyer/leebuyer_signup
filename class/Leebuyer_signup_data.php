@@ -26,6 +26,8 @@ class Leebuyer_signup_data
     {
         global $xoopsTpl, $xoopsUser;
 
+        /************報名內容************/
+
         //抓取預設值
         $db_values = empty($id) ? [] : self::get($id);
 
@@ -47,11 +49,14 @@ class Leebuyer_signup_data
         $token_form = $token->render();
         $xoopsTpl->assign("token_form", $token_form);
 
-        $action = Leebuyer_signup_actions::get($action_id);
+        /************活動內容************/
 
-        if (time() > strtotime($action['end_date'])) {
+        //用類別的方式抓出
+        $action = Leebuyer_signup_actions::get($action_id); //抓筆資料要給它編號$action_id，要在function參數的地方給個入口$action_id，在index.php流程處create也要給$action_id(要看來源是否存在)。
+
+        if (time() > strtotime($action['end_date'])) { //time()指現在時間，strtotime轉換成時間戳記
             redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名！");
-        };
+        }
 
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
         foreach ($action as $col_name => $col_val) {
@@ -63,16 +68,18 @@ class Leebuyer_signup_data
                 $col_val = $myts->htmlSpecialChars($col_val);
             }
 
-            $action[$col_name] = $col_val;
+            $action[$col_name] = $col_val; //把原始資料過濾完塞回原陣列
         }
-        $xoopsTpl->assign("action", $action);
+        $xoopsTpl->assign("action", $action); //把活動的陣列送去表單，如此不會後面蓋前面
 
+        /************使用者本身資料************/
         $uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign("uid", $uid);
 
-        $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        //儲存資料
+        $TadDataCenter = new TadDataCenter('leebuyer_signup'); //new之後要填入模組名稱，會自動去抓編號，亦是資料庫內mid欄位模組編號
         $TadDataCenter->set_col('id', $id); //修改時必須告知綁定方法，當初是用id綁定並抓出編號，綁定上了就會把預設值還原回來
-        $signup_form = $TadDataCenter->strToForm($action['setup']);
+        $signup_form = $TadDataCenter->strToForm($action['setup']); //strToForm把eguide標籤語法轉換成真正的表單，setup就是在做這事
         $xoopsTpl->assign('signup_form', $signup_form);
     }
     //新增資料
@@ -108,7 +115,7 @@ class Leebuyer_signup_data
 
         //儲存資料
         $TadDataCenter = new TadDataCenter('leebuyer_signup');
-        $TadDataCenter->set_col('id', $id);
+        $TadDataCenter->set_col('id', $id); //綁定這個值
         $TadDataCenter->saveData();
 
         return $id;
