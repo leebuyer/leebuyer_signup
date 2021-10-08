@@ -28,9 +28,9 @@
 
     <{$token_form}>
     <input type="hidden" name="op" value="<{$next_op}>">
-    <input type="hidden" name="id" value="<{$id}>"><{*報名表編號。是修改哪一筆報名編號*}>
-    <input type="hidden" name="action_id" value="<{$action.id}>"><{*報名哪一個活動*}>
-    <input type="hidden" name="uid" value="<{$uid}>"><{*是誰報名*}>
+    <input type="hidden" name="id" value="<{$id}>"><!--報名表編號。是修改哪一筆報名編號-->
+    <input type="hidden" name="action_id" value="<{$action.id}>"><!--報名哪一個活動-->
+    <input type="hidden" name="uid" value="<{$uid}>"><!--是誰報名-->
     <div class="bar">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-save" aria-hidden="true"></i> <{$smarty.const._TAD_SAVE}>

@@ -70,7 +70,7 @@ switch ($op) {
 
     //修改報名表單
     case 'leebuyer_signup_data_edit':
-        Leebuyer_signup_data::create($action_id, $id);
+        Leebuyer_signup_data::create($action_id, $id); //延用create的表單(因希望修改跟新增用同一個表單)，修改時$id編號要給，另有活動編號$action_id
         $op = 'leebuyer_signup_data_create';
         break;
 

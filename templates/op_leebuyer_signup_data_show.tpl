@@ -22,12 +22,12 @@
 </h3>
 
 <table class="table">
-    <{foreach from=$tdc key=title item=signup name=tdc}>
+    <{foreach from=$tdc key=title item=signup name=tdc}><!---signup是一個陣列，所以td內再跑一次迴圈--->
         <tr>
             <th><{$title}></th>
             <td>
                 <{foreach from=$signup key=i item=val name=signup}>
-                    <div><{$val}></div>
+                    <div><{$val}></div><!---用div包起來才會換行--->
                 <{/foreach}>
             </td>
         </tr>

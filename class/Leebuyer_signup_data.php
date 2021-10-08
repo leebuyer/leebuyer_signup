@@ -165,7 +165,7 @@ class Leebuyer_signup_data
         $xoopsTpl->assign("now_uid", $now_uid);
 
         $SweetAlert = new SweetAlert();
-        $SweetAlert->render("del_data", "index.php?op=tad_signup_data_destroy&action_id=<{$action_id}>&id=", 'id'); //要刪的是報名編號，非活動編號，故將會變動的id變數放在後面且把值移除以javascript靈活保持彈性，以接當下的值傳進去
+        $SweetAlert->render("del_data", "index.php?op=leebuyer_signup_data_destroy&action_id={$action_id}&id=", 'id'); //要刪的是報名編號，非活動編號，故將會變動的id變數放在後面且把值移除以javascript靈活保持彈性，以接當下的值傳進去
     }
 
     //更新某一筆資料
