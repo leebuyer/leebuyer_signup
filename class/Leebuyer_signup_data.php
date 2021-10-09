@@ -13,11 +13,12 @@ use XoopsModules\Tadtools\Utility;
 class Leebuyer_signup_data
 {
     //列出所有資料
-    public static function index()
+    public static function index($action_id) //($action_id)是必填，沒有預設值($action_id="")
+
     {
         global $xoopsTpl;
 
-        $all_data = self::get_all();
+        $all_data = self::get_all($action_id); //$action_id必須經由index($action_id)給預設值進來
         $xoopsTpl->assign('all_data', $all_data);
     }
 
@@ -195,7 +196,7 @@ class Leebuyer_signup_data
             //取得資料陣列
             $TadDataCenter = new TadDataCenter('leebuyer_signup');
             $TadDataCenter->set_col('id', $id); //此id為重新迴圈跑完後之id
-            $tdc = $TadDataCenter->getData();
+            $TadDataCenter->saveData();
         } else {
             Utility::web_error($sql, __FILE__, __LINE__);
         }
@@ -242,20 +243,27 @@ class Leebuyer_signup_data
     }
 
     //取得所有資料陣列
-    public static function get_all($auto_key = false)
+    public static function get_all($action_id, $auto_key = false) //在本檔案之public static function index()處有用到get_all()，故要付予$action值
+
     {
         global $xoopsDB;
         $myts = \MyTextSanitizer::getInstance();
 
-        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where 1 ";
+        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
+
+        $TadDataCenter = new TadDataCenter('leebuyer_signup'); //實體化。leebuyer_signup是目錄名稱
         while ($data = $xoopsDB->fetchArray($result)) {
 
             // $data['文字欄'] = $myts->htmlSpecialChars($data['文字欄']);
             // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
             // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
             // $data['數字欄'] = (int) $data['數字欄'];
+
+            //取得資料陣列
+            $TadDataCenter->set_col('id', $data['id']); //此id為重新迴圈跑完後之id
+            $data['tdc'] = $TadDataCenter->getData(); //getData()取得綁定的相關資料，現在是綁定id的相關資料
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;

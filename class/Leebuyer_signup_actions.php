@@ -4,8 +4,9 @@
 
 namespace XoopsModules\Leebuyer_signup;
 
-use XoopsModules\Tadtools\FormValidator;
-use XoopsModules\Tadtools\My97DatePicker; //tadtool內之小月曆
+use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
+use XoopsModules\Tadtools\FormValidator; //tadtool內之小月曆
+use XoopsModules\Tadtools\My97DatePicker;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
 
@@ -142,6 +143,10 @@ class Leebuyer_signup_actions//命名與檔名相同
         }
         $SweetAlert = new SweetAlert();
         $SweetAlert->render("del_action", "index.php?op=leebuyer_signup_actions_destroy&id=", 'id'); //del_action是javascript函數的名字，index.php?op=leebuyer_signup_actions_destroy&id="是原先刪除的聯結，d="後面因是活的所以不要寫值，id是參數名稱。在樣板刪除連結處要帶入javascript:del_action('<{$id}>')
+
+        $signup = Leebuyer_signup_data::get_all($id);
+        Utility::dd($signup);
+        $xoopsTpl->assign('signup', $signup);
     }
 
     //更新某一筆資料
