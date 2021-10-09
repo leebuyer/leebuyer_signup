@@ -5,6 +5,7 @@
 namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
+use XoopsModules\Tadtools\BootstrapTable;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\TadDataCenter;
@@ -57,6 +58,8 @@ class Leebuyer_signup_data
 
         if (time() > strtotime($action['end_date'])) { //time()指現在時間，strtotime轉換成時間戳記
             redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名！");
+        } elseif (count($action['signup']) >= $action['number']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名！");
         }
 
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
@@ -243,13 +246,21 @@ class Leebuyer_signup_data
     }
 
     //取得所有資料陣列
-    public static function get_all($action_id, $auto_key = false) //在本檔案之public static function index()處有用到get_all()，故要付予$action值
+    public static function get_all($action_id = '', $uid = '', $auto_key = false) //在本檔案之public static function index()處有用到get_all()，故要付予$action值
 
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
         $myts = \MyTextSanitizer::getInstance();
 
-        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
+        if ($action_id) {
+            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
+        } else {
+            if (!$_SESSION['leebuyer_signup_adm'] or !$uid) {
+                $uid = $xoopsUser ? $xoopsUser->uid() : 0;
+            }
+            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `uid`='$uid' order by `signup_date`";
+        }
+
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
 
@@ -264,6 +275,7 @@ class Leebuyer_signup_data
             //取得資料陣列
             $TadDataCenter->set_col('id', $data['id']); //此id為重新迴圈跑完後之id
             $data['tdc'] = $TadDataCenter->getData(); //getData()取得綁定的相關資料，現在是綁定id的相關資料
+            $data['action'] = Leebuyer_signup_actions::get($data['action_id']);
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;
@@ -272,6 +284,16 @@ class Leebuyer_signup_data
             }
         }
         return $data_arr;
+    }
+
+    //查詢某人的報名記錄
+    public static function my($uid)
+    {
+        global $xoopsTpl, $xoopsUser;
+
+        $my_signup = self::get_all(null, $uid);
+        $xoopsTpl->assign('my_signup', $my_signup);
+        BootstrapTable::render();
     }
 
 }

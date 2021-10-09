@@ -9,6 +9,10 @@ if (!isset($_SESSION[$is_admin])) {
 $interface_menu[_TAD_TO_MOD] = "index.php";
 $interface_icon[_TAD_TO_MOD] = "fa-chevron-right";
 
+//新增我的報名記錄選單
+$interface_menu['我的報名記錄'] = "my_signup.php";
+$interface_icon['我的報名記錄'] = "fa-chevron-right";
+
 //模組後台
 if ($_SESSION[$is_admin]) {
     $interface_menu[_TAD_TO_ADMIN] = "admin/main.php";

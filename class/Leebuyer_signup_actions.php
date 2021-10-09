@@ -5,7 +5,8 @@
 namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
-use XoopsModules\Tadtools\FormValidator; //tadtool內之小月曆
+use XoopsModules\Tadtools\BootstrapTable; //tadtool內之小月曆，可做欄位排序、搜尋....等功能
+use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\My97DatePicker;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
@@ -113,7 +114,7 @@ class Leebuyer_signup_actions//命名與檔名相同
     //以流水號秀出某筆資料內容
     public static function show($id = '')
     {
-        global $xoopsDB, $xoopsTpl;
+        global $xoopsDB, $xoopsTpl, $xoopsUser;
 
         if (empty($id)) {
             return;
@@ -144,9 +145,15 @@ class Leebuyer_signup_actions//命名與檔名相同
         $SweetAlert = new SweetAlert();
         $SweetAlert->render("del_action", "index.php?op=leebuyer_signup_actions_destroy&id=", 'id'); //del_action是javascript函數的名字，index.php?op=leebuyer_signup_actions_destroy&id="是原先刪除的聯結，d="後面因是活的所以不要寫值，id是參數名稱。在樣板刪除連結處要帶入javascript:del_action('<{$id}>')
 
-        $signup = Leebuyer_signup_data::get_all($id);
-        Utility::dd($signup);
+        $signup = Leebuyer_signup_data::get_all($id, null, true); //$auto_key預設是false，用本身流水號當索引,現true重新編號01234...，優點是一定會有0，沒0表格就不會出現
         $xoopsTpl->assign('signup', $signup);
+
+        BootstrapTable::render(); //自動載入javascript、css等所需工具
+
+        //註冊會員，uid編號送至樣板後判斷是否資料讀出的這個人
+        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign("uid", $uid);
+
     }
 
     //更新某一筆資料
@@ -240,9 +247,11 @@ class Leebuyer_signup_actions//命名與檔名相同
             // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
             // $data['數字欄'] = (int) $data['數字欄'];
 
-            $data['title'] = $myts->htmlSpecialChars($data['title']);
-            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
-            $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1);
+            $data['title'] = $myts->htmlSpecialChars($data['title']); //過濾
+            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1); //過濾
+            $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1); //過濾
+
+            $data['signup'] = Leebuyer_signup_data::get_all($data['id']); //活動報名完整資料
 
             if ($_SESSION['api_mode'] or $auto_key) { //api_mode，$auto_key控制索引值要採取哪一種
                 $data_arr[] = $data;

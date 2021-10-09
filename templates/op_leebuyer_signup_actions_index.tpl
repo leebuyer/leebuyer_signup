@@ -18,13 +18,15 @@
                 </td>
                 <td><{$action.action_date}></td>
                 <td><{$action.end_date}></td>
-                <td>0/<{$action.number}></td>
+                <td><{$action.signup|@count}>/<{$action.number}></td><!----|是套用php函數count把前面套入計算筆數，前面加@是因為算此陣列-->>
                 <td>
                     <{if $smarty.session.leebuyer_signup_adm}>
-                        <a href="index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-xs btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
+                        <a href="index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
                     <{/if}>
-                    <{if $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>   <{*end_date時間不能做比較，用strtotime把日期轉換成時間戳記*}>
-                        <a href="index.php?op=leebuyer_signup_data_create&action_id=<{$action.id}>" class="btn btn-xs btn-info"><i class="fa fa-plus" aria-hidden="true"></i>立即報名</a>
+                    <{if $action.number > $action.signup|@count && $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>   <!--end_date時間不能做比較，用strtotime把日期轉換成時間戳記-->
+                        <a href="index.php?op=leebuyer_signup_data_create&action_id=<{$action.id}>" class="btn btn-sm btn-info"><i class="fa fa-plus" aria-hidden="true"></i>立即報名</a>
+                    <{else}>
+                        <a href="index.php?id=<{$action.id}>" class="btn btn-sm btn-success"><i class="fa fa-file" aria-hidden="true"></i>詳情</a>
                     <{/if}>
                 </if>
                 </td>
