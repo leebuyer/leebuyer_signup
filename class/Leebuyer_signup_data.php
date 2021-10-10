@@ -28,10 +28,16 @@ class Leebuyer_signup_data
     {
         global $xoopsTpl, $xoopsUser;
 
+        $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
+
         /************報名內容************/
 
         //抓取預設值
-        $db_values = empty($id) ? [] : self::get($id);
+        $db_values = empty($id) ? [] : self::get($id, $uid); //$uid要麻就是空的，不能為零
+
+        if ($id and empty($db_values)) {
+            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, "查無報名無資料，無法修改！");
+        }
 
         foreach ($db_values as $col_name => $col_val) {
             $$col_name = $col_val;
@@ -54,26 +60,21 @@ class Leebuyer_signup_data
         /************活動內容************/
 
         //用類別的方式抓出
-        $action = Leebuyer_signup_actions::get($action_id); //抓筆資料要給它編號$action_id，要在function參數的地方給個入口$action_id，在index.php流程處create也要給$action_id(要看來源是否存在)。
+        $action = Leebuyer_signup_actions::get($action_id, true); //抓筆資料要給它編號$action_id，要在function參數的地方給個入口$action_id，在index.php流程處create也要給$action_id(要看來源是否存在)。
+        $action['signup'] = Leebuyer_signup_data::get_all($action_id);
 
-        if (time() > strtotime($action['end_date'])) { //time()指現在時間，strtotime轉換成時間戳記
-            redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名！");
+        // if (time() > strtotime($action['end_date'])) { //time()指現在時間，strtotime轉換成時間戳記
+        //     redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已報名截止，無法再進行報名或修改報名！");
+        // } elseif (count($action['signup']) >= $action['number']) {
+        //     redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "人數已滿，無法再進行報名！");
+        // }
+
+        if (time() > strtotime($action['end_date'])) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名");
         } elseif (count($action['signup']) >= $action['number']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名！");
+            redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名");
         }
 
-        $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
-        foreach ($action as $col_name => $col_val) {
-
-            //過濾"讀出"的變數值
-            if ($col_name == 'detail') {
-                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
-            } else {
-                $col_val = $myts->htmlSpecialChars($col_val);
-            }
-
-            $action[$col_name] = $col_val; //把原始資料過濾完塞回原陣列
-        }
         $xoopsTpl->assign("action", $action); //把活動的陣列送去表單，如此不會後面蓋前面
 
         /************使用者本身資料************/
@@ -134,8 +135,14 @@ class Leebuyer_signup_data
             return;
         }
 
+        $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
+
         $id = (int) $id;
-        $data = self::get($id); //資料庫把資料抓出來
+        $data = self::get($id, $uid); //資料庫把資料抓出來
+
+        if (empty($data)) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "查無報名資料，無法觀看！");
+        }
 
         $myts = \MyTextSanitizer::getInstance();
         //報名
@@ -153,16 +160,8 @@ class Leebuyer_signup_data
         $xoopsTpl->assign('tdc', $tdc);
 
         //活動
-        $action = Leebuyer_signup_actions::get($action_id); //跑5次迴圈其中一個就是$action_id
-        foreach ($action as $col_name => $col_val) {
-            //過濾讀出的變數值
-            if ($col_name == 'detail') {
-                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
-            } else {
-                $col_val = $myts->htmlSpecialChars($col_val);
-            }
-            $action[$col_name] = $col_val; //再塞回陣列
-        }
+        $action = Leebuyer_signup_actions::get($action_id, true); //跑5次迴圈其中一個就是$action_id
+
         $xoopsTpl->assign('action', $action);
 
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
@@ -230,7 +229,7 @@ class Leebuyer_signup_data
     }
 
     //以流水號取得某筆資料
-    public static function get($id = '')
+    public static function get($id = '', $uid = '')
     {
         global $xoopsDB;
 
@@ -238,8 +237,10 @@ class Leebuyer_signup_data
             return;
         }
 
+        $and_uid = $uid ? "and `uid` = '$uid'" : ''; //判斷有值的話and `uid`等於我指定的$uid，如沒有傳進來表示不用判斷身分，$and_uid放到sql內
+
         $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "`
-        where `id` = '{$id}'";
+        where `id` = '{$id}' $and_uid";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result);
         return $data;
@@ -267,15 +268,10 @@ class Leebuyer_signup_data
         $TadDataCenter = new TadDataCenter('leebuyer_signup'); //實體化。leebuyer_signup是目錄名稱
         while ($data = $xoopsDB->fetchArray($result)) {
 
-            // $data['文字欄'] = $myts->htmlSpecialChars($data['文字欄']);
-            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);
-            // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
-            // $data['數字欄'] = (int) $data['數字欄'];
-
             //取得資料陣列
             $TadDataCenter->set_col('id', $data['id']); //此id為重新迴圈跑完後之id
             $data['tdc'] = $TadDataCenter->getData(); //getData()取得綁定的相關資料，現在是綁定id的相關資料
-            $data['action'] = Leebuyer_signup_actions::get($data['action_id']);
+            $data['action'] = Leebuyer_signup_actions::get($data['action_id'], true);
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;

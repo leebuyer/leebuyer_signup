@@ -123,22 +123,10 @@ class Leebuyer_signup_actions//命名與檔名相同
         //過濾數字
         $id = (int) $id;
         //取得某筆資料成一維陣列
-        $data = self::get($id);
+        $data = self::get($id, true);
 
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
         foreach ($data as $col_name => $col_val) { //把一維陣列一筆一筆抽出來
-            //$col_val = $myts->htmlSpecialChars($col_val); //之後沒有要針對每個變數做什麼事，而是直接送到樣板，故不用$$var_name = $myts->htmlSpecialChars($var_val);
-
-            //過濾讀出的變數值 displayTarea($text, $html=0, $smiley=1, $xcode=1, $image=1, $br=1);
-            // $data['大量文字欄'] = $myts->displayTarea($data['大量文字欄'], 0, 1, 0, 1, 1);(非所件即所得編輯器用參數0, 1, 0, 1, 1。用所件即所得編輯器用參數1, 0, 0, 0, 0)
-            // $data['HTML文字欄'] = $myts->displayTarea($data['HTML文字欄'], 1, 0, 0, 0, 0);
-
-            //過濾"讀出"的變數值
-            if ($col_name == 'detail') {
-                $col_val = $myts->displayTarea($col_val, 0, 1, 0, 1, 1);
-            } else {
-                $col_val = $myts->htmlSpecialChars($col_val);
-            }
 
             $xoopsTpl->assign($col_name, $col_val);
         }
@@ -215,7 +203,8 @@ class Leebuyer_signup_actions//命名與檔名相同
     }
 
     //以流水號取得某筆資料
-    public static function get($id = '')
+    public static function get($id = '', $filter = false) //加入第二個參數$filter = false
+
     {
         global $xoopsDB;
 
@@ -227,6 +216,11 @@ class Leebuyer_signup_actions//命名與檔名相同
         where `id` = '{$id}'";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result); //fetchArray把欄位名稱當作索引值
+        if ($filter) {
+            $myts = \MyTextSanitizer::getInstance();
+            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
+            $data['title'] = $myts->htmlSpecialChars($data['title']);
+        }
         return $data;
     }
 
