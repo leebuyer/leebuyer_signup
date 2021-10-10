@@ -262,4 +262,45 @@ class Leebuyer_signup_actions//命名與檔名相同
         return $data_arr;
     }
 
+    //複製活動
+    public static function copy($id)
+    {
+        global $xoopsDB, $xoopsUser;
+
+        //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
+        if (!$_SESSION['leebuyer_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action = self::get($id);
+        $uid = $xoopsUser->uid();
+        $end_date = date('Y-m-d 17:30:00', strtotime('+2 weeks')); //把兩週後的時間戳記格式化成我們要的日期
+        $action_date = date('Y-m-d 09:00:00', strtotime('+16 days'));
+
+        $sql = "insert into `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` (
+            `title`,
+            `detail`,
+            `action_date`,
+            `end_date`,
+            `number`,
+            `setup`,
+            `uid`,
+            `enable`
+        ) values(
+            '{$action['title']}_copy',
+            '{$action['detail']}',
+            '{$action_date}',
+            '{$end_date}',
+            '{$action['number']}',
+            '{$action['setup']}',
+            '{$uid}',
+            '0'
+        )";
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__); //當無法執行時顯示錯誤訊息
+
+        //取得最後新增資料的流水編號
+        $id = $xoopsDB->getInsertId(); //只有在寫入時才用到，取得當下寫入資料的流水號
+        return $id;
+    }
+
 }

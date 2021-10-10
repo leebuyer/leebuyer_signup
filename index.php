@@ -15,6 +15,7 @@ require_once XOOPS_ROOT_PATH . '/header.php';
 $op = Request::getString('op');
 $id = Request::getInt('id');
 $action_id = Request::getInt('action_id');
+$accept = Request::getInt('accept');
 
 /*-----------執行動作判斷區----------*/
 switch ($op) {
@@ -86,6 +87,18 @@ switch ($op) {
         Leebuyer_signup_data::destroy($id);
         //header("location: {$_SERVER['PHP_SELF']?id=$action_id}");
         redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功刪除報名資料！");
+        exit;
+
+    //更改錄取狀態
+    case 'leebuyer_signup_data_accept':
+        Leebuyer_signup_data::accept($id, $accept);
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功設定錄取狀態！");
+        exit;
+
+    //複製活動
+    case 'leebuyer_signup_actions_copy':
+        $new_id = Leebuyer_signup_actions::copy($id);
+        redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_actions_edit&id=$new_id", 3, "已成功複製活動！");
         exit;
 
     default:

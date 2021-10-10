@@ -296,4 +296,22 @@ class Leebuyer_signup_data
         BootstrapTable::render();
     }
 
+    public static function accept($id, $accept)
+    {
+        global $xoopsDB, $xoopsUser;
+
+        //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
+        if (!$_SESSION['leebuyer_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，您沒有權限使用此功能");
+        }
+
+        $id = (int) $id;
+        $accept = (int) $accept;
+
+        $sql = "update `" . $xoopsDB->prefix("leebuyer_signup_data") . "` set
+        `accept` = '$accept'
+        where `id` = '$id'";
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    }
+
 }
