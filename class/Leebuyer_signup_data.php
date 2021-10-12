@@ -28,6 +28,7 @@ class Leebuyer_signup_data
     {
         global $xoopsTpl, $xoopsUser;
 
+        //搜尋其他地方有用到 get() 的地方，看是否要加入，修改 create() 時，若不是管理員，就強制只能讀取自己的資料，讀不到資料就轉走。
         $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
 
         /************報名內容************/
@@ -60,7 +61,7 @@ class Leebuyer_signup_data
         /************活動內容************/
 
         //用類別的方式抓出
-        $action = Leebuyer_signup_actions::get($action_id, true); //抓筆資料要給它編號$action_id，要在function參數的地方給個入口$action_id，在index.php流程處create也要給$action_id(要看來源是否存在)。
+        $action = Leebuyer_signup_actions::get($action_id, true); //抓筆資料要給它編號$action_id，要在function參數的地方給個入口$action_id，在index.php流程處create也要給$action_id(要看來源是否存在)。true是要過濾
         $action['signup'] = Leebuyer_signup_data::get_all($action_id);
 
         // if (time() > strtotime($action['end_date'])) { //time()指現在時間，strtotime轉換成時間戳記
@@ -71,7 +72,7 @@ class Leebuyer_signup_data
 
         if (time() > strtotime($action['end_date'])) {
             redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名");
-        } elseif (count($action['signup']) >= $action['number']) {
+        } elseif (count($action['signup']) >= $action['number']) { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
             redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名");
         }
 
@@ -160,7 +161,7 @@ class Leebuyer_signup_data
         $xoopsTpl->assign('tdc', $tdc);
 
         //活動
-        $action = Leebuyer_signup_actions::get($action_id, true); //跑5次迴圈其中一個就是$action_id
+        $action = Leebuyer_signup_actions::get($action_id, true); //跑5次迴圈其中一個就是$action_id。true是要過濾
 
         $xoopsTpl->assign('action', $action);
 
@@ -229,7 +230,8 @@ class Leebuyer_signup_data
     }
 
     //以流水號取得某筆資料
-    public static function get($id = '', $uid = '')
+    public static function get($id = '', $uid = '') //加入第二個參數 $uid，若該參數有值時，會同時加入篩選條件，確保只會篩出原始報名者資料
+
     {
         global $xoopsDB;
 
@@ -237,7 +239,7 @@ class Leebuyer_signup_data
             return;
         }
 
-        $and_uid = $uid ? "and `uid` = '$uid'" : ''; //判斷有值的話and `uid`等於我指定的$uid，如沒有傳進來表示不用判斷身分，$and_uid放到sql內
+        $and_uid = $uid ? "and `uid` = '$uid'" : ''; //sql語法，判斷有值的話and `uid`等於我指定的$uid，如沒有傳進來表示不用判斷身分，$and_uid放到sql內
 
         $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "`
         where `id` = '{$id}' $and_uid";
@@ -254,7 +256,7 @@ class Leebuyer_signup_data
         $myts = \MyTextSanitizer::getInstance();
 
         if ($action_id) {
-            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date`";
+            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date` desc";
         } else {
             if (!$_SESSION['leebuyer_signup_adm'] or !$uid) {
                 $uid = $xoopsUser ? $xoopsUser->uid() : 0;
@@ -270,7 +272,7 @@ class Leebuyer_signup_data
 
             //取得資料陣列
             $TadDataCenter->set_col('id', $data['id']); //此id為重新迴圈跑完後之id
-            $data['tdc'] = $TadDataCenter->getData(); //getData()取得綁定的相關資料，現在是綁定id的相關資料
+            $data['tdc'] = $TadDataCenter->getData(); //getData()取得xx_leebuyer_signup_data_center資料，綁定的相關資料，現在是綁定id的相關資料
             $data['action'] = Leebuyer_signup_actions::get($data['action_id'], true);
 
             if ($_SESSION['api_mode'] or $auto_key) {
@@ -287,14 +289,14 @@ class Leebuyer_signup_data
     {
         global $xoopsTpl, $xoopsUser;
 
-        $my_signup = self::get_all(null, $uid);
+        $my_signup = self::get_all(null, $uid); //只查指定uid的報名記錄
         $xoopsTpl->assign('my_signup', $my_signup);
         BootstrapTable::render();
     }
 
     public static function accept($id, $accept)
     {
-        global $xoopsDB, $xoopsUser;
+        global $xoopsDB;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
         if (!$_SESSION['leebuyer_signup_adm']) {

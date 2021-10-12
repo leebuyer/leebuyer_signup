@@ -23,7 +23,7 @@
 <table class="table" data-toggle="table" data-pagination="true" data-search="true" data-mobile-responsive="true">
     <thead>
         <tr>
-            <{foreach from=$signup.0.tdc key=col_name item=user name=tdc}>
+            <{foreach from=$signup.0.tdc key=col_name item=user name=tdc}>  <!--from=$signup.0.tdc來源資料已寫到第3層-->
         <th data-sortable="true"><{$col_name}></th>
             <{/foreach}>
             <{if $smarty.session.leebuyer_signup_adm}>

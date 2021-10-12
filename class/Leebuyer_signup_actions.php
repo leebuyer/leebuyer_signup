@@ -123,7 +123,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         //過濾數字
         $id = (int) $id;
         //取得某筆資料成一維陣列
-        $data = self::get($id, true);
+        $data = self::get($id, true); //加入第2個參數true要過濾
 
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
         foreach ($data as $col_name => $col_val) { //把一維陣列一筆一筆抽出來
@@ -136,9 +136,9 @@ class Leebuyer_signup_actions//命名與檔名相同
         $signup = Leebuyer_signup_data::get_all($id, null, true); //$auto_key預設是false，用本身流水號當索引,現true重新編號01234...，優點是一定會有0，沒0表格就不會出現
         $xoopsTpl->assign('signup', $signup);
 
-        BootstrapTable::render(); //自動載入javascript、css等所需工具
+        BootstrapTable::render(); //啟用bootstrap，自動載入javascript、css等所需工具
 
-        //註冊會員，uid編號送至樣板後判斷是否資料讀出的這個人
+        //註冊會員，uid編號送至樣板op_leebuyer_signup_actions_show.tpl後判斷是否資料讀出的這個人
         $uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign("uid", $uid);
 
@@ -216,6 +216,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         where `id` = '{$id}'";
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result); //fetchArray把欄位名稱當作索引值
+
         if ($filter) {
             $myts = \MyTextSanitizer::getInstance();
             $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
@@ -245,7 +246,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1); //過濾
             $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1); //過濾
 
-            $data['signup'] = Leebuyer_signup_data::get_all($data['id']); //活動報名完整資料
+            $data['signup'] = Leebuyer_signup_data::get_all($data['id']); //活動報名完整資料，包含報名人數，此處算亦可，但縣至樣板算人數
 
             if ($_SESSION['api_mode'] or $auto_key) { //api_mode，$auto_key控制索引值要採取哪一種
                 $data_arr[] = $data;
@@ -266,10 +267,10 @@ class Leebuyer_signup_actions//命名與檔名相同
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
-        $action = self::get($id);
-        $uid = $xoopsUser->uid();
+        $action = self::get($id); //取得資料
+        $uid = $xoopsUser->uid(); //$uid的值重新抓一下，因管理員不止一人不知誰複製，是看目前是誰就把$uid設成他
         $end_date = date('Y-m-d 17:30:00', strtotime('+2 weeks')); //把兩週後的時間戳記格式化成我們要的日期
-        $action_date = date('Y-m-d 09:00:00', strtotime('+16 days'));
+        $action_date = date('Y-m-d 09:00:00', strtotime('+16 days')); //把活動日期加16天
 
         $sql = "insert into `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` (
             `title`,

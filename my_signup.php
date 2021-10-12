@@ -17,7 +17,7 @@ switch ($op) {
 
     default:
 
-        Leebuyer_signup_data::my($uid);
+        Leebuyer_signup_data::my($uid); //只有自己跟管理員可看報名記錄，故指定個$uid編號(要記得設定變數來源$uid = Request::getInt('uid');)
         $op = 'leebuyer_signup_data_my';
 
         break;
