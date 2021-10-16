@@ -60,6 +60,7 @@ switch ($op) {
     //新增報名資料
     case 'leebuyer_signup_data_store':
         $id = Leebuyer_signup_data::store();
+        Leebuyer_signup_data::mail($id, 'store');
         //header("location: {$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id");
         redirect_header("{$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id", 3, "已成功新增報名！");
         exit;
@@ -78,13 +79,17 @@ switch ($op) {
     //更新報名資料
     case 'leebuyer_signup_data_update':
         Leebuyer_signup_data::update($id);
+        Leebuyer_signup_data::mail($id, 'update'); //先寄信完再轉向
         //header("location: {$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id");
         redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_data_show&id=$id", 3, "已成功修改報名資料！");
         exit;
 
     //刪除報名資料
     case 'leebuyer_signup_data_destroy':
-        Leebuyer_signup_data::destroy($id);
+        $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //uid判斷是否為管理員
+        $signup = Leebuyer_signup_data::get($id, $uid); //取得此編號跟此人發的資料，取完後放到mail參數內
+        Leebuyer_signup_data::destroy($id); //取得完之後就可刪除
+        Leebuyer_signup_data::mail($id, 'update', $signup);
         //header("location: {$_SERVER['PHP_SELF']?id=$action_id}");
         redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功刪除報名資料！");
         exit;
@@ -92,6 +97,7 @@ switch ($op) {
     //更改錄取狀態
     case 'leebuyer_signup_data_accept':
         Leebuyer_signup_data::accept($id, $accept);
+        Leebuyer_signup_data::mail($id, 'accept');
         redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功設定錄取狀態！");
         exit;
 

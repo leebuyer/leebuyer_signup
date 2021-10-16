@@ -114,7 +114,7 @@ class Leebuyer_signup_actions//命名與檔名相同
     //以流水號秀出某筆資料內容
     public static function show($id = '')
     {
-        global $xoopsTpl, $xoopsUser;
+        global $xoopsDB, $xoopsTpl, $xoopsUser;
 
         if (empty($id)) {
             return;
@@ -135,10 +135,6 @@ class Leebuyer_signup_actions//命名與檔名相同
 
         $signup = Leebuyer_signup_data::get_all($id, null, true); //$auto_key預設是false，用本身流水號當索引,現true重新編號01234...，優點是一定會有0，沒0表格就不會出現
         $xoopsTpl->assign('signup', $signup);
-
-        // 統計次數
-        $statistics = Leebuyer_signup_data::statistics($data['setup'], $signup);
-        $xoopsTpl->assign('statistics', $statistics);
 
         BootstrapTable::render(); //啟用bootstrap，自動載入javascript、css等所需工具
 

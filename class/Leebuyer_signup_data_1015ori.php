@@ -312,38 +312,4 @@ class Leebuyer_signup_data
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     }
 
-    // 統計 radio、checkbox、select
-    public static function statistics($setup, $signup = [])
-    {
-        $result = []; //初始值
-        $setup_items = explode("\n", $setup); //explode(separator,string,limit)函數把字符串分割為數組。separator必需。規定在哪裡分割字符串。string    必需。要分割的字符串。limit    可選。規定所返回的數組元素的最大數目。屆時$setup_items會是陣列。statistics($setup, $signup = [])在..._action.php之show會呼叫他
-
-        foreach ($setup_items as $setup_item) { //$setup_items是陣列就用foreach一個個的抽出來
-            if (preg_match("/radio|checkbox|select/", $setup_item)) { //preg_match執行一個正則表達式匹配
-                $items = explode(",", $setup_item); //用空值取代*號
-                $title = str_replace('*', '', $items[0]);
-                foreach ($signup as $data) { //不用取索引，$signup是報名資料，若有10個人報名就會跑10圈，$data是一個人的報名完整資料
-                    foreach ($data['tdc'][$title] as $option) { //而我們只需要tdc裡面的資料，裡面資料現只取之前抓出來radio|checkbox|select3項
-                        $result[$title][$option]++;
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    //立即寄出
-    public static function send($title = "無標題", $content = "無內容", $email = "")
-    {
-        global $xoopsUser;
-        if (empty($email)) {
-            $email = $xoopsUser->email();
-        }
-        $xoopsMailer = xoops_getMailer();
-        $xoopsMailer->multimailer->ContentType = "text/html";
-        $xoopsMailer->addHeaders("MIME-Version: 1.0");
-        $header = '';
-        return $xoopsMailer->sendMail($email, $title, $content, $header);
-    }
-
 }

@@ -37,29 +37,22 @@
             <tr>
                 <{foreach from=$signup_data.tdc key=col_name item=user_data}>
                     <td>
-                        <{if $smarty.session.leebuyer_signup_adm || $signup_data.uid == $uid}>  <!---是管理員看到完整資料或此筆資料uid跟登入資料uid相同，意指這筆資料是我自己的--->
-                            <{foreach from=$user_data item=data}>
-                                <div>
-                                    <a href="index.php?op=leebuyer_signup_data_show&id=<{$signup_data.id}>"><{$data}></a>
+                        <{foreach from=$user_data item=data}>
+                            <{if $smarty.session.leebuyer_signup_adm || $signup_data.uid == $uid}>  <!---是管理員看到完整資料或此筆資料uid跟登入資料uid相同，意指這筆資料是我自己的--->
+                                <div><a href="index.php?op=leebuyer_signup_data_show&id=<{$signup_data.id}>"><{$data}></a>
                                 </div>
-                            <{/foreach}>
-                        <{else}>
-                            <div>
+                            <{else}>
                                 <!---有登入但這筆資料不是我的--->
-                                <{if strpos($col_name, '姓名')!==false}>    <!---strpos()函數返回字符串在另一個字符串中第一次出現的位置。如果沒有找到該字符串，則返回 false。此例是在$col_name內找姓名，假如姓名有的話就取代，不是姓名就****--->
-                                    <{if preg_match("/[a-z]/i", $user_data.0)}>
-                                        <{$user_data.0|regex_replace:"/[a-z]/":"*"}>
-                                    <{else}>
-                                        <{$user_data.0|substr_replace:'O':3:3}>
-                                    <{/if}> <!--substr_replace() 函數把字符串的一部分替換為另一個字符串。3是第三位元(第2個字是345)，3是取3個位元-->
+                                <{if strpos($col_name, '姓名')!==false}>    <!---strpos()函數返回字符串在另一個字符串中第一次出現的位置。如果沒有找到該字符串，則返回 false。此例是在$col_name內找姓名，假如姓名有的話--->
+                                <div><{$data|substr_replace:'o':3:3}></div> <!--substr_replace() 函數把字符串的一部分替換為另一個字符串。3是第三位元(第2個字是345)，3是取3個位元-->
                                 <{else}>
-                                    ****
+                                    <div>****</div>
                                 <{/if}>
-                            </div>
-                        <{/if}>
+                            <{/if}>
+
+                        <{/foreach}>
                     </td>
                 <{/foreach}>
-
                 <{if $smarty.session.leebuyer_signup_adm}>
                     <td>
                         <{if $signup_data.accept==='1'}>
@@ -79,22 +72,6 @@
             </tr>
         <{/foreach}>
     </tbody>
-</table>
-
-<table class="table table-sm">
-    <tr>
-        <{foreach from=$statistics key=title item=options}>
-            <td>
-                <b><{$title}></b>
-                <hr class="my-1">
-                <ul>
-                    <{foreach from=$options key=option item=count}>
-                        <li><{$option}> : <{$count}></li>
-                    <{/foreach}>
-                </ul>
-            </td>
-        <{/foreach}>
-    </tr>
 </table>
 
 <{if $smarty.session.leebuyer_signup_adm}>
