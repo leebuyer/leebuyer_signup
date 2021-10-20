@@ -29,7 +29,7 @@ class Leebuyer_signup_data
         global $xoopsTpl, $xoopsUser;
 
         //搜尋其他地方有用到 get() 的地方，看是否要加入，修改 create() 時，若不是管理員，就強制只能讀取自己的資料，讀不到資料就轉走。
-        $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
+        $uid = $_SESSION['can_add'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
 
         /************報名內容************/
 
@@ -136,7 +136,7 @@ class Leebuyer_signup_data
             return;
         }
 
-        $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
+        $uid = $_SESSION['can_add'] ? null : $xoopsUser->uid(); //是管理員的話就不抓是空的，不能是零，若不是管理員，只能抓取目前登入者
 
         $id = (int) $id;
         $data = self::get($id, $uid); //資料庫把資料抓出來
@@ -207,7 +207,7 @@ class Leebuyer_signup_data
         return $id;
     }
 
-    //刪除某筆資料資料
+    //刪除某筆資料
     public static function destroy($id = '')
     {
         global $xoopsDB, $xoopsUser;
@@ -219,7 +219,7 @@ class Leebuyer_signup_data
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
 
         $sql = "delete from `" . $xoopsDB->prefix("leebuyer_signup_data") . "`
-        where `id` = '{$id}' and `uid` = '$now_uid'";
+        where `id` = '{$id}' and `uid` = '{$now_uid}'";
         if ($xoopsDB->queryF($sql)) {
             $TadDataCenter = new TadDataCenter('leebuyer_signup');
             $TadDataCenter->set_col('id', $id);
@@ -258,7 +258,7 @@ class Leebuyer_signup_data
         if ($action_id) {
             $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date` desc";
         } else {
-            if (!$_SESSION['leebuyer_signup_adm'] or !$uid) {
+            if (!$_SESSION['can_add'] or !$uid) {
                 $uid = $xoopsUser ? $xoopsUser->uid() : 0;
             }
             $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `uid`='$uid' order by `signup_date`";
@@ -299,7 +299,7 @@ class Leebuyer_signup_data
         global $xoopsDB;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
-        if (!$_SESSION['leebuyer_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，您沒有權限使用此功能");
         }
 
@@ -370,13 +370,102 @@ class Leebuyer_signup_data
 
         if ($type == 'destroy') {
             $title = "【{$action['title']}】取消報名通知";
-            $content = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}取消報名！</p>";
-            $content .= "欲重新報名，請連至" . XOOPS_URL . "modules/leebuyer/signup/index.php?op=leebuyer_signup_data_create&action_id={$action['id']}";
+            $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}取消報名！</p>";
+            $foot = "欲重新報名，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_create&action_id={$action['id']}";
+        } elseif ($type == 'store') {
+            $title = "【{$action['title']}】報名完成通知";
+            $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}完成報名！</p>";
+            $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
+        } elseif ($type == 'update') {
+            $title = "【{$action['title']}】修改報名通知";
+            $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}修改報名通知如下！</p>";
+            $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
+        } elseif ($type == 'accept') {
+            $title = "【{$action['title']}】報名錄取狀況通知";
+            if ($signup['accept'] == 1) {
+                $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已通過審核，<h2 style='color:#e699f2'>恭喜錄取！</h2></p>";
+            } else {
+                $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已審核，很遺憾的通知您，因名額有限，</p><span style='color:red;'>您並未錄取！</span>";
+            }
+            $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
+
+            $signupUser = $member_handler->getUser($signup['uid']);
+            $email = $signupUser->email();
         }
+
+        $content = self::mk_content($id, $head, $foot, $action);
+
         if (!self::send($title, $content, $email)) {
             redirect_header($_SERVER['PHP_SELF'], 3, "通知信寄發失敗！");
-        };
+        }
         self::send($title, $content, $adm_email);
+
+    }
+
+    //產生通知信內容
+    public static function mk_content($id, $head, $foot, $action = [])
+    {
+        if ($id) {
+            $TadDataCenter = new TadDataCenter('leebuyer_signup');
+            $TadDataCenter->set_col('id', $id);
+            $tdc = $TadDataCenter->getData();
+
+            $table = '<table class="table">';
+            foreach ($tdc as $title => $signup) {
+                $table .= "
+                <tr>
+                    <th>{$title}</th>
+                    <td>";
+                foreach ($signup as $i => $val) {
+                    $table .= "<div>{$val}</div>";
+                }
+
+                $table .= "</td>
+                </tr>";
+            }
+            $table .= '</table>';
+        }
+
+        $content = "
+        <html>
+            <head>
+                <style>
+                    .table{
+                        border:1px solid #000;
+                        border-collapse: collapse;
+                        margin:10px 0px;
+                    }
+
+                    .table th, .table td{
+                        border:1px solid #000;
+                        padding: 4px 10px;
+                    }
+
+                    .table th{
+                        background:#c1e7f4;
+                    }
+
+                    .well{
+                        border-radius: 10px;
+                        background: #fcfcfc;
+                        border: 2px solid #cfcfcf;
+                    }
+                        padding:14px 16px;
+                        margin:10px 0px;
+                    }
+                </style>
+            </head>
+            <body>
+            $head
+            <h2>{$action['title']}</h2>
+            <div>活動日期：{$action['action_date']}</div>
+            <div class='well'>{$action['detail']}</div>
+            $table
+            $foot
+            </body>
+        </html>
+        ";
+        return $content;
 
     }
 

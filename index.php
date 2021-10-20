@@ -86,7 +86,7 @@ switch ($op) {
 
     //刪除報名資料
     case 'leebuyer_signup_data_destroy':
-        $uid = $_SESSION['leebuyer_signup_adm'] ? null : $xoopsUser->uid(); //uid判斷是否為管理員
+        $uid = $_SESSION['can_add'] ? null : $xoopsUser->uid(); //uid判斷是否為管理員
         $signup = Leebuyer_signup_data::get($id, $uid); //取得此編號跟此人發的資料，取完後放到mail參數內
         Leebuyer_signup_data::destroy($id); //取得完之後就可刪除
         Leebuyer_signup_data::mail($id, 'destroy', $signup);

@@ -13,7 +13,7 @@
         <{foreach from=$my_signup item=signup_data}>
             <tr>
                 <td>
-                    <a href="index.php?id=<{$signup_data.action.id}>">
+                    <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?id=<{$signup_data.action.id}>">
                         <{$signup_data.action.title}>
                     </a>
                 </td>

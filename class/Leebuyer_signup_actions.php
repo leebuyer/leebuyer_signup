@@ -15,11 +15,11 @@ class Leebuyer_signup_actions//命名與檔名相同
 
 {
     //列出所有資料
-    public static function index()
+    public static function index($only_enable = true)
     {
         global $xoopsTpl;
 
-        $all_data = self::get_all();
+        $all_data = self::get_all($only_enable);
         $xoopsTpl->assign('all_data', $all_data);
     }
 
@@ -28,7 +28,7 @@ class Leebuyer_signup_actions//命名與檔名相同
     {
         global $xoopsTpl, $xoopsUser;
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
-        if (!$_SESSION['leebuyer_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
         }
 
@@ -67,7 +67,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         global $xoopsDB;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
-        if (!$_SESSION['leebuyer_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
@@ -154,7 +154,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         global $xoopsDB;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
-        if (!$_SESSION['leebuyer_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
         }
 
@@ -190,15 +190,20 @@ class Leebuyer_signup_actions//命名與檔名相同
     //刪除某筆資料資料
     public static function destroy($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUse;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
-        if (!$_SESSION['leebuyer_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
         if (empty($id)) {
             return;
+        }
+        $action = self::get($id);
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        if ($action['uid'] != $now_uid && !$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
         $sql = "delete from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "`
@@ -267,7 +272,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         global $xoopsDB, $xoopsUser;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
-        if (!$_SESSION['leebuyer_signup_adm']) {
+        if (!$_SESSION['can_add']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 

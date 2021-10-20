@@ -38,8 +38,8 @@
     </div>
 </form>
 
-<{if $smarty.session.leebuyer_signup_adm}>
+<{if $smarty.session.can_add}>
     <div class="bar">
-        <a href="index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
     </div>
 <{/if}>

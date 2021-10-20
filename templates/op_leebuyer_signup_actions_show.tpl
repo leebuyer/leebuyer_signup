@@ -26,7 +26,7 @@
             <{foreach from=$signup.0.tdc key=col_name item=user name=tdc}>  <!--from=$signup.0.tdc來源資料已寫到第3層-->
         <th data-sortable="true"><{$col_name}></th>
             <{/foreach}>
-            <{if $smarty.session.leebuyer_signup_adm}>
+            <{if $smarty.session.can_add}>
                 <th data-sortable="true">錄取</th>
             <{/if}>
             <th data-sortable="true">報名日期</th>
@@ -37,10 +37,10 @@
             <tr>
                 <{foreach from=$signup_data.tdc key=col_name item=user_data}>
                     <td>
-                        <{if $smarty.session.leebuyer_signup_adm || $signup_data.uid == $uid}>  <!---是管理員看到完整資料或此筆資料uid跟登入資料uid相同，意指這筆資料是我自己的--->
+                        <{if $can_add || $signup_data.uid == $uid}>  <!---是管理員看到完整資料或此筆資料uid跟登入資料uid相同，意指這筆資料是我自己的--->
                             <{foreach from=$user_data item=data}>
                                 <div>
-                                    <a href="index.php?op=leebuyer_signup_data_show&id=<{$signup_data.id}>"><{$data}></a>
+                                    <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_show&id=<{$signup_data.id}>"><{$data}></a>
                                 </div>
                             <{/foreach}>
                         <{else}>
@@ -60,18 +60,18 @@
                     </td>
                 <{/foreach}>
 
-                <{if $smarty.session.leebuyer_signup_adm}>
+                <{if $smarty.session.can_add}>
                     <td>
                         <{if $signup_data.accept==='1'}>
                             <div class="text-primary">錄取</div>
-                            <a href="index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">改成未錄取</a>
+                            <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">改成未錄取</a>
                         <{elseif $signup_data.accept==='0'}>
                             <div class="text-danger">未錄取</div>
-                            <a href="index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">改成錄取</a>
+                            <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">改成錄取</a>
                         <{else}>
                             <div class="text-muted">尚未審定</div>
-                            <a href="index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">未錄取</a>
-                            <a href="index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">錄取</a>
+                            <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">未錄取</a>
+                            <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">錄取</a>
                         <{/if}>
                     </td>
                 <{/if}>
@@ -97,9 +97,9 @@
     </tr>
 </table>
 
-<{if $smarty.session.leebuyer_signup_adm}>
+<{if $smarty.session.can_add}>
     <div class="bar">
         <a href="javascript:del_action('<{$id}>')" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>刪除活動</a>
-        <a href="index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
     </div>
 <{/if}>
