@@ -72,6 +72,8 @@ class Leebuyer_signup_data
 
         if (time() > strtotime($action['end_date'])) {
             redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名");
+        } elseif (!$action['enable']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "此報名已關閉，無法再進行報名或修改報名");
         } elseif (count($action['signup']) >= $action['number']) { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
             redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名");
         }

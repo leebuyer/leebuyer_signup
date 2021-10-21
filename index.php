@@ -109,7 +109,7 @@ switch ($op) {
 
     default:
         if (empty($id)) {
-            Leebuyer_signup_actions::index(); //Leebuyer_signup_actions 是類別（class），:: 是呼叫類別的靜態方法（無須用new去進行實例化），index()就是類別的靜態方法（函式）
+            Leebuyer_signup_actions::index($xoopsModuleConfig['only_enable']); //Leebuyer_signup_actions 是類別（class），:: 是呼叫類別的靜態方法（無須用new去進行實例化），index()就是類別的靜態方法（函式）
             $op = 'leebuyer_signup_actions_index';
         } else {
             Leebuyer_signup_actions::show($id);

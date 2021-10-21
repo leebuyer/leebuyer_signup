@@ -57,8 +57,8 @@ $modversion['templates'][] = ['file' => 'leebuyer_signup_admin.tpl', 'descriptio
 $modversion['templates'][] = ['file' => 'leebuyer_signup_index.tpl', 'description' => '前台共同樣板'];
 
 //---搜尋---//
-// $modversion['hasSearch'] = 1;
-// $modversion['search'] = ['file' => 'include/search.php', 'func' => '搜尋函數名稱'];
+$modversion['hasSearch'] = 1;
+$modversion['search'] = ['file' => 'include/search.php', 'func' => 'leebuyer_signup_search'];
 
 //---區塊設定---//
 // $modversion['blocks'][] = [
@@ -72,14 +72,23 @@ $modversion['templates'][] = ['file' => 'leebuyer_signup_index.tpl', 'descriptio
 // ];
 
 //---偏好設定---//
-// $modversion['config'][] = [
-//     'name' => '偏好設定名稱（英文）',
-//     'title' => '_MI_偏好設定標題_常數',
-//     'description' => '_MI_偏好設定說明_常數',
-//     'formtype' => '輸入表單類型',
-//     'valuetype' => '輸入值類型',
-//     'default' => '預設值',
-// ];
+$modversion['config'][] = [
+    'name' => 'show_number', //'偏好設定名稱（英文）',
+    'title' => '_MI_LEEBUYER_SIGNUP_SHOW_NUMBER', //'_MI_偏好設定標題_常數',此處務必加引號
+    'description' => '_MI_LEEBUYER_SIGNUP_SHOW_NUMBER_DESC', //'_MI_偏好設定說明_常數',
+    'formtype' => 'textbox', //'輸入表單類型',
+    'valuetype' => 'int', //'輸入值類型',
+    'default' => '10', //'預設值',
+];
+
+$modversion['config'][] = [
+    'name' => 'only_enable', //'偏好設定名稱（英文）',
+    'title' => '_MI_LEEBUYER_SIGNUP_ONLY_ENABLE', //'_MI_偏好設定標題_常數',此處務必加引號
+    'description' => '_MI_LEEBUYER_SIGNUP_ONLY_ENABLE_DESC', //'_MI_偏好設定說明_常數',
+    'formtype' => 'yeno', //'輸入表單類型',
+    'valuetype' => 'int', //'輸入值類型',
+    'default' => '0', //'預設值',
+];
 
 //---評論---//
 // $modversion['hasComments'] = 1;

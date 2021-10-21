@@ -16,7 +16,7 @@
             活動說明
         </label>
         <div class="col-sm-10">
-            <textarea name="detail" id="detail" class="form-control validate[required]" placeholder="請輸入標題活動內容"><{$detail}></textarea>
+            <{$editor}>
         </div>
     </div>
 

@@ -6,6 +6,7 @@ namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
 use XoopsModules\Tadtools\BootstrapTable; //tadtool內之小月曆，可做欄位排序、搜尋....等功能
+use XoopsModules\Tadtools\CkEditor;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\My97DatePicker;
 use XoopsModules\Tadtools\SweetAlert;
@@ -17,10 +18,13 @@ class Leebuyer_signup_actions//命名與檔名相同
     //列出所有資料
     public static function index($only_enable = true)
     {
-        global $xoopsTpl;
+        global $xoopsTpl, $xoopsUser;
 
         $all_data = self::get_all($only_enable);
         $xoopsTpl->assign('all_data', $all_data);
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign("now_uid", $now_uid);
     }
 
     //編輯表單
@@ -32,14 +36,24 @@ class Leebuyer_signup_actions//命名與檔名相同
             redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，無法執行此動作");
         }
 
-        //抓取預設值(抓取該活動預設值以及設定表單的預設值)
-        $db_values = empty($id) ? [] : self::get($id);
-        $db_values['number'] = empty($id) ? 50 : $db_values['number'];
-        $db_values['enable'] = empty($id) ? 1 : $db_values['enable'];
+        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        if ($id) {
+            //抓取預設值(抓取該活動預設值以及設定表單的預設值)
+            $db_values = empty($id) ? [] : self::get($id);
 
-        foreach ($db_values as $col_name => $col_val) {
-            $$col_name = $col_val;
-            $xoopsTpl->assign($col_name, $col_val);
+            if ($uid != $db_values['uid'] && !$_SESSION['leebuyer_signup_adm']) {
+                redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            }
+            $db_values['number'] = empty($id) ? 50 : $db_values['number'];
+            $db_values['enable'] = empty($id) ? 1 : $db_values['enable'];
+
+            foreach ($db_values as $col_name => $col_val) {
+                $$col_name = $col_val;
+                $xoopsTpl->assign($col_name, $col_val);
+            }
+        } else {
+            $xoopsTpl->assign("uid", $uid);
+
         }
 
         $op = empty($id) ? "leebuyer_signup_actions_store" : "leebuyer_signup_actions_update";
@@ -55,10 +69,11 @@ class Leebuyer_signup_actions//命名與檔名相同
         $token_form = $token->render();
         $xoopsTpl->assign("token_form", $token_form);
 
-        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
-        $xoopsTpl->assign("uid", $uid);
-
         My97DatePicker::render(); //把小月曆所需之javascript與css引入，另在樣板之日期時間input內加入onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss' , startDate:'%y-%M-%d %H:%m:%s}'})"
+
+        $CkEditor = new CkEditor('leebuyer_signup', 'detail', $detail);
+        $editor = $CkEditor->render();
+        $xoopsTpl->assign("editor", $editor);
     }
 
     //新增資料
@@ -143,15 +158,15 @@ class Leebuyer_signup_actions//命名與檔名相同
         BootstrapTable::render(); //啟用bootstrap，自動載入javascript、css等所需工具
 
         //註冊會員，uid編號送至樣板op_leebuyer_signup_actions_show.tpl後判斷是否資料讀出的這個人
-        $uid = $xoopsUser ? $xoopsUser->uid() : 0;
-        $xoopsTpl->assign("uid", $uid);
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        $xoopsTpl->assign("now_uid", $now_uid);
 
     }
 
     //更新某一筆資料
     public static function update($id = '')
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsUser;
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
         if (!$_SESSION['can_add']) {
@@ -171,6 +186,11 @@ class Leebuyer_signup_actions//命名與檔名相同
         $uid = (int) $uid;
         $number = (int) $number;
         $enable = (int) $enable;
+
+        $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
+        if ($uid != $now_uid && !$_SESSION['leebuyer_signup_adm']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
 
         $sql = "update `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` set
         `title` = '{$title}',
@@ -202,7 +222,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         }
         $action = self::get($id);
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
-        if ($action['uid'] != $now_uid && !$_SESSION['can_add']) {
+        if ($action['uid'] != $now_uid && !$_SESSION['leebuyer_signup_adm']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
         }
 
@@ -228,7 +248,7 @@ class Leebuyer_signup_actions//命名與檔名相同
 
         if ($filter) {
             $myts = \MyTextSanitizer::getInstance();
-            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1);
+            $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0);
             $data['title'] = $myts->htmlSpecialChars($data['title']);
         }
         return $data;
@@ -237,11 +257,20 @@ class Leebuyer_signup_actions//命名與檔名相同
     //取得所有資料陣列
     public static function get_all($only_enable = true, $auto_key = false)
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
         //index()則利用類別中的 get_all()來取得該資料表所有值，我們添加一個參數參數 $only_enable 用來指示是僅列出已啟用（包含未過期活動），還是全部都列出。
         $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : ''; //1是恆成立，什麼都篩
-        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` where 1 $and_enable";
+        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` where 1 $and_enable order by `enable`, `action_date` desc";
+
+        //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
+        $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10);
+        $bar = $PageBar['bar'];
+        $sql = $PageBar['sql'];
+        $total = $PageBar['total'];
+        $xoopsTpl->assign('bar', $bar);
+        $xoopsTpl->assign('total', $total);
+
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
         while ($data = $xoopsDB->fetchArray($result)) {
@@ -252,8 +281,8 @@ class Leebuyer_signup_actions//命名與檔名相同
             // $data['數字欄'] = (int) $data['數字欄'];
 
             $data['title'] = $myts->htmlSpecialChars($data['title']); //過濾
-            $data['detail'] = $myts->displayTarea($data['detail'], 0, 1, 0, 1, 1); //過濾
-            $data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1); //過濾
+            $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0); //過濾
+            //$data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1); //過濾
 
             $data['signup'] = Leebuyer_signup_data::get_all($data['id']); //活動報名完整資料，包含報名人數，此處算亦可，但縣至樣板算人數
 
