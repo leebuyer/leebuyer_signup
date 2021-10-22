@@ -334,7 +334,7 @@ class Leebuyer_signup_data
         return $result;
     }
 
-    //立即寄出
+    //立即寄出(只純脆將信寄出)
     public static function send($title = "無標題", $content = "無內容", $email = "")
     {
         global $xoopsUser;
@@ -362,13 +362,13 @@ class Leebuyer_signup_data
 
         $now = date("Y-m-d H:i:s");
         $name = $xoopsUser->name();
-        $name = $name ? $name : $xoopsUser->uname();
+        $name = $name ? $name : $xoopsUser->uname(); //有姓名就抓姓名，若無就抓帳號
 
-        $action = Leebuyer_signup_actions::get($signup['action_id']);
+        $action = Leebuyer_signup_actions::get($signup['action_id']); //抓取活動編號資訊
 
         $member_handler = xoops_getHandler('member');
-        $admUser = $member_handler->getUser($action['uid']);
-        $adm_email = $admUser->email();
+        $admUser = $member_handler->getUser($action['uid']); //給uid就會生出那一個使用者物件
+        $adm_email = $admUser->email(); //得到email
 
         if ($type == 'destroy') {
             $title = "【{$action['title']}】取消報名通知";
@@ -391,84 +391,85 @@ class Leebuyer_signup_data
             }
             $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
 
+            //取得報名者的編號
             $signupUser = $member_handler->getUser($signup['uid']);
             $email = $signupUser->email();
         }
 
         $content = self::mk_content($id, $head, $foot, $action);
 
+        //寄信失敗秀出訊息
         if (!self::send($title, $content, $email)) {
             redirect_header($_SERVER['PHP_SELF'], 3, "通知信寄發失敗！");
         }
+        //寄信給管理員
         self::send($title, $content, $adm_email);
 
     }
 
-    //產生通知信內容
-    public static function mk_content($id, $head, $foot, $action = [])
+    // 產生通知信內容
+    public static function mk_content($id, $head = '', $foot = '', $action = [])
     {
         if ($id) {
             $TadDataCenter = new TadDataCenter('leebuyer_signup');
             $TadDataCenter->set_col('id', $id);
-            $tdc = $TadDataCenter->getData();
+            $tdc = $TadDataCenter->getData(); //假如有id編號的話就去抓出此人的完整報名資料
 
             $table = '<table class="table">';
             foreach ($tdc as $title => $signup) {
                 $table .= "
-                <tr>
-                    <th>{$title}</th>
-                    <td>";
+            <tr>
+                <th>{$title}</th>
+                <td>";
                 foreach ($signup as $i => $val) {
                     $table .= "<div>{$val}</div>";
                 }
 
                 $table .= "</td>
-                </tr>";
+            </tr>";
             }
             $table .= '</table>';
         }
 
         $content = "
-        <html>
-            <head>
-                <style>
-                    .table{
-                        border:1px solid #000;
-                        border-collapse: collapse;
-                        margin:10px 0px;
-                    }
+    <html>
+        <head>
+            <style>
+                .table{
+                    border:2px solid #cfcfcf;
+                    border-collapse: collapse;
+                    margin:10px 0px;
+                }
 
-                    .table th, .table td{
-                        border:1px solid #000;
-                        padding: 4px 10px;
-                    }
+                .table th, .table td{
+                    border:1px solid #632222;
+                    padding: 4px 10px;
+                }
 
-                    .table th{
-                        background:#c1e7f4;
-                    }
+                .table th{
+                    background:#cfcfcf;
+                }
 
-                    .well{
-                        border-radius: 10px;
-                        background: #fcfcfc;
-                        border: 2px solid #cfcfcf;
-                    }
-                        padding:14px 16px;
-                        margin:10px 0px;
-                    }
-                </style>
-            </head>
-            <body>
-            $head
-            <h2>{$action['title']}</h2>
-            <div>活動日期：{$action['action_date']}</div>
-            <div class='well'>{$action['detail']}</div>
-            $table
-            $foot
-            </body>
-        </html>
-        ";
+                .well{
+                    border-radius: 10px;
+                    background: #fcfcfc;
+                    border: 2px solid #cfcfcf;
+                    padding:14px 16px;
+                    margin:10px 0px;
+                }
+            </style>
+        </head>
+        <body>
+        $head
+        <h2>{$action['title']}</h2>
+        <div>活動日期：{$action['action_date']}</div>
+        <div class='well'>{$action['detail']}</div>
+        $table
+        $foot
+        </body>
+    </html>
+    ";
         return $content;
-
     }
 
 }
