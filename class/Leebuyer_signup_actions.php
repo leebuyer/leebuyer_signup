@@ -21,6 +21,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         global $xoopsTpl, $xoopsUser;
 
         $all_data = self::get_all($only_enable);
+
         $xoopsTpl->assign('all_data', $all_data);
 
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
@@ -255,21 +256,25 @@ class Leebuyer_signup_actions//命名與檔名相同
     }
 
     //取得所有資料陣列
-    public static function get_all($only_enable = true, $auto_key = false)
+    public static function get_all($only_enable = true, $auto_key = false, $show_number = 0, $order = ",`action_date` desc")
     {
         global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
         $myts = \MyTextSanitizer::getInstance(); //建立資料過濾工具
         //index()則利用類別中的 get_all()來取得該資料表所有值，我們添加一個參數參數 $only_enable 用來指示是僅列出已啟用（包含未過期活動），還是全部都列出。
-        $and_enable = $only_enable ? "and `enable` = '1' and `action_date` >= now()" : ''; //1是恆成立，什麼都篩
-        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` where 1 $and_enable order by `enable`, `action_date` desc";
+        $and_enable = $only_enable ? "and `enable` = '1' and `end_date` >= now()" : ''; //1是恆成立，什麼都篩
 
-        //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
-        $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10);
-        $bar = $PageBar['bar'];
-        $sql = $PageBar['sql'];
-        $total = $PageBar['total'];
-        $xoopsTpl->assign('bar', $bar);
-        $xoopsTpl->assign('total', $total);
+        $limit = $show_number ? "limit 0, $show_number" : ""; //若是有給$show_number，就是要抓出某幾筆
+        $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` where 1 $and_enable order by `enable`$order $limit";
+
+        if (!$show_number) {
+            //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
+            $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10); //若是沒有給$show_number，就是要跑偏好設定$xoopsModuleConfig['show_number']，亦是回到之前設定的模式
+            $bar = $PageBar['bar'];
+            $sql = $PageBar['sql'];
+            $total = $PageBar['total'];
+            $xoopsTpl->assign('bar', $bar);
+            $xoopsTpl->assign('total', $total);
+        }
 
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data_arr = [];
