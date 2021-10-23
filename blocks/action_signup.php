@@ -1,12 +1,14 @@
 <?php
 
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
+use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
 use XoopsModules\Tadtools\Utility;
 
 //可報名活動一覽的編輯區塊函數
 function action_signup($options)
 {
     $block = Leebuyer_signup_actions::get($options[0], true);
+    $block['signup'] = Leebuyer_signup_data::get_all($options[0], null, true);
     return $block;
 }
 
