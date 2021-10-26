@@ -21,11 +21,26 @@ class Update
         }
         return $groupid;
     }
-    // 執行某些調整
-    public static function go_1()
+
+    // 進行有無候補欄位檢查
+    public static function chk_candidate()
     {
         global $xoopsDB;
-        // $sql = 'ALTER TABLE ' . $xoopsDB->prefix('資料表名') . '';
-        // $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin', 30, $xoopsDB->error());
+        $sql = 'SELECT count(`candidate`) FROM ' . $xoopsDB->prefix('leebuyer_signup_actions') . ' ';
+        $result = $xoopsDB->query($sql);
+        if (empty($result)) {
+            return true;
+        }
+
+        return false;
     }
+
+    // 執行新增候補欄位
+    public static function go_candidate()
+    {
+        global $xoopsDB;
+        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('leebuyer_signup_actions') . " ADD `candidate` tinyint(3) unsigned NOT NULL '後補功能'";
+        $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin', 30, $xoopsDB->error());
+    }
+
 }

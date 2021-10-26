@@ -1,12 +1,13 @@
 <?php
+
 use XoopsModules\Leebuyer_signup\Update;
-if (!class_exists('XoopsModules\Tadtools\Utility')) {
-    require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
+if (!class_exists('XoopsModules\Leebuyer_signup\Update')) {
+    require dirname(__DIR__) . '/preloads/autoloader.php';
 }
 
 use XoopsModules\Tadtools\Utility;
-if (!class_exists('XoopsModules\Leebuyer_signup\Update')) {
-    require dirname(__DIR__) . '/preloads/autoloader.php';
+if (!class_exists('XoopsModules\Tadtools\Utility')) {
+    require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
 
 // 更新前
@@ -23,7 +24,7 @@ function xoops_module_pre_update_leebuyer_signup(XoopsModule $module, $old_versi
     $gperm_handler = xoops_getHandler('groupperm');
     $groupid = Update::mk_group("活動報名管理");
 
-    if (!$gperm_handler->checkRight($module->dirname(), 1, $groupid, $module->mid())) {
+    if (!$gperm_handler->checkRight($module->dirname(), 1, $groupid, $module->mid())) { //在tadtools/class/power_chk()函數內會用到內鍵的工具checkRight()。判斷此模組1號權限,對此群組是否有執行?是否有權限?如果沒有做下面動作。如此在xx_group_permission資料表每更新一次就會多一筆資料
         $perm_handler = xoops_getHandler('groupperm');
         $perm = $perm_handler->create();
         $perm->setVar('gperm_groupid', $groupid);
@@ -40,9 +41,10 @@ function xoops_module_update_leebuyer_signup(XoopsModule $module, $old_version)
 {
     global $xoopsDB;
 
-    // if (Update::chk_1()) {
-    //     Update::go_1();
-    // }
+    //新增候補欄位
+    if (Update::chk_candidate()) {
+        Update::go_candidate();
+    }
 
     return true;
 }

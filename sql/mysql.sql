@@ -8,6 +8,7 @@ CREATE TABLE `leebuyer_signup_actions` (
   `setup` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '設置',
   `uid` mediumint(8) unsigned NOT NULL COMMENT '使用者登入編號',
   `enable` enum('1','0') NOT NULL COMMENT '活動開關',
+  `candidate` tinyint(3) unsigned NOT NULL '後補功能',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

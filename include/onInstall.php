@@ -1,13 +1,13 @@
 <?php
 
 use XoopsModules\Leebuyer_signup\Update;
-if (!class_exists('XoopsModules\Tadtools\Utility')) {
-    require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
+if (!class_exists('XoopsModules\Leebuyer_signup\Update')) {
+    require dirname(__DIR__) . '/preloads/autoloader.php';
 }
 
 use XoopsModules\Tadtools\Utility;
-if (!class_exists('XoopsModules\Leebuyer_signup\Update')) {
-    require dirname(__DIR__) . '/preloads/autoloader.php';
+if (!class_exists('XoopsModules\Tadtools\Utility')) {
+    require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
 
 // 安裝前
