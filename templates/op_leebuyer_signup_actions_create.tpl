@@ -43,9 +43,19 @@
             報名人數
         </label>
         <div class="col-sm-10">
-            <input type="number" name="number" id="變數名稱" class="form-control validate[required]" value="<{$number}>" placeholder="請輸入報名人數">
+            <input type="number" name="number" id="number" class="form-control validate[required]" value="<{$number}>" placeholder="請輸入報名人數">
         </div>
     </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 control-label col-form-label text-md-right">
+            候補名額
+        </label>
+        <div class="col-sm-10">
+            <input type="number" name="candidate" id="candidate" class="form-control validate[required]" value="<{$candidate}>" placeholder="請輸入候補名額">
+        </div>
+    </div>
+
 
     <div class="form-group row">
         <label class="col-sm-2 control-label col-form-label text-md-right">
@@ -73,6 +83,15 @@
                     否
                 </label>
             </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 control-label col-form-label text-md-right">
+            上傳附件
+        </label>
+        <div class="col-sm-10">
+            <{$upform}>
         </div>
     </div>
 

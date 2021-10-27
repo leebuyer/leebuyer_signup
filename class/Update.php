@@ -39,7 +39,7 @@ class Update
     public static function go_candidate()
     {
         global $xoopsDB;
-        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('leebuyer_signup_actions') . " ADD `candidate` tinyint(3) unsigned NOT NULL '後補功能'";
+        $sql = 'ALTER TABLE ' . $xoopsDB->prefix('leebuyer_signup_actions') . " ADD `candidate` tinyint(3) unsigned NOT NULL COMMENT '候補功能'";
         $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin', 30, $xoopsDB->error());
     }
 

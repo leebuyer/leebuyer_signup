@@ -10,6 +10,7 @@ use XoopsModules\Tadtools\CkEditor;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\My97DatePicker;
 use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Tadtools\TadUpFiles;
 use XoopsModules\Tadtools\Utility;
 
 class Leebuyer_signup_actions//命名與檔名相同
@@ -75,6 +76,13 @@ class Leebuyer_signup_actions//命名與檔名相同
         $CkEditor = new CkEditor('leebuyer_signup', 'detail', $detail);
         $editor = $CkEditor->render();
         $xoopsTpl->assign("editor", $editor);
+
+        //上傳檔案
+        $TadUpFiles = new TadUpFiles('leebuyer_signup');
+        $TadUpFiles->set_col('action_id', $id);
+        $upform = $TadUpFiles->upform(true, 'upfile');
+        $xoopsTpl->assign("upform", $upform);
+
     }
 
     //新增資料
@@ -100,6 +108,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         $uid = (int) $uid;
         $number = (int) $number;
         $enable = (int) $enable;
+        $candidate = (int) $candidate;
 
         $sql = "insert into `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` (
             `title`,
@@ -109,6 +118,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             `number`,
             `setup`,
             `enable`,
+            `candidate`,
             `uid`
         ) values(
             '{$title}',
@@ -118,12 +128,18 @@ class Leebuyer_signup_actions//命名與檔名相同
             '{$number}',
             '{$setup}',
             '{$enable}',
+            '{$candidate}',
             '{$uid}'
         )";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__); //當無法執行時顯示錯誤訊息
 
         //取得最後新增資料的流水編號
         $id = $xoopsDB->getInsertId(); //只有在寫入時才用到，取得當下寫入資料的流水號
+
+        //上傳檔案
+        $TadUpFiles = new TadUpFiles('leebuyer_signup');
+        $TadUpFiles->set_col('action_id', $id);
+        $TadUpFiles->upload_file('upfile', '1280', '240', '', null, true);
         return $id;
     }
 
@@ -187,6 +203,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         $uid = (int) $uid;
         $number = (int) $number;
         $enable = (int) $enable;
+        $candidate = (int) $candidate;
 
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         if ($uid != $now_uid && !$_SESSION['leebuyer_signup_adm']) {
@@ -201,9 +218,15 @@ class Leebuyer_signup_actions//命名與檔名相同
         `number` = '{$number}',
         `setup` = '{$setup}',
         `enable` = '{$enable}',
+        `candidate` = '{$candidate}',
         `uid` = '{$uid}'
         where `id` = '$id'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+        //上傳檔案
+        $TadUpFiles = new TadUpFiles('leebuyer_signup');
+        $TadUpFiles->set_col('action_id', $id);
+        $TadUpFiles->upload_file('upfile', '1280', '240', '', null, true);
 
         return $id;
     }
@@ -230,6 +253,11 @@ class Leebuyer_signup_actions//命名與檔名相同
         $sql = "delete from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "`
         where `id` = '{$id}'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+        //上傳檔案
+        $TadUpFiles = new TadUpFiles('leebuyer_signup');
+        $TadUpFiles->set_col('action_id', $id);
+        $TadUpFiles->del_files();
     }
 
     //以流水號取得某筆資料
@@ -252,6 +280,12 @@ class Leebuyer_signup_actions//命名與檔名相同
             $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0);
             $data['title'] = $myts->htmlSpecialChars($data['title']);
         }
+
+        //顯示檔案
+        $TadUpFiles = new TadUpFiles('leebuyer_signup');
+        $TadUpFiles->set_col('action_id', $id);
+        $data['files'] = $TadUpFiles->show_files('upfile');
+
         return $data;
     }
 
@@ -323,7 +357,8 @@ class Leebuyer_signup_actions//命名與檔名相同
             `number`,
             `setup`,
             `uid`,
-            `enable`
+            `enable`,
+            `candidate`
         ) values(
             '{$action['title']}_copy',
             '{$action['detail']}',
@@ -332,7 +367,8 @@ class Leebuyer_signup_actions//命名與檔名相同
             '{$action['number']}',
             '{$action['setup']}',
             '{$uid}',
-            '0'
+            '0',
+            '{$action['candidate']}'
         )";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__); //當無法執行時顯示錯誤訊息
 

@@ -1,5 +1,5 @@
 <h2 class="my">
-    <{if $enable && $number > $signup|@count && $end_date|strtotime >= $smarty.now}>  <!--顯示啟用或關閉圖示-->
+    <{if $enable && ($number + $candidate) > $signup|@count && $end_date|strtotime >= $smarty.now}>  <!--顯示啟用或關閉圖示-->
         <i class="fa fa-check text-success" aria-hidden="true"></i>
     <{else}>
         <i class="fa fa-times text-danger" aria-hidden="true"></i>
@@ -12,13 +12,16 @@
     <{$detail}>
 </div>
 
-<h3 class="my">
+<{$files}>
+
+<h4 class="my">
     已報名資料
     <small>
         <i class="fa fa-calendar-check-o" aria-hidden="true"></i>報名截止日期:<{$end_date}>
         <i class="fa fa-users" aria-hidden="true"></i>報名人數上限:<{$number}>
+        <{if $candidate}><span data-toggle="tooltip" title="可候補名額">(<{$candidate}>)</span><{/if}>
     </small>
-</h3>
+</h4>
 
 <table class="table" data-toggle="table" data-pagination="true" data-search="true" data-mobile-responsive="true">
     <thead>
@@ -80,7 +83,12 @@
                         <{/if}>
                     </td>
 
-                <td><{$signup_data.signup_date}></td>
+                <td>
+                    <{$signup_data.signup_date}>
+                    <{if $signup_data.tag}>
+                        <div><span class="badge badge-primary"><{$signup_data.tag}></span></div>
+                    <{/if}>
+                </td>
             </tr>
         <{/foreach}>
     </tbody>

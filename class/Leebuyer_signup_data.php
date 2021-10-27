@@ -74,7 +74,7 @@ class Leebuyer_signup_data
             redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名");
         } elseif (!$action['enable']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "此報名已關閉，無法再進行報名或修改報名");
-        } elseif (count($action['signup']) >= $action['number']) { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
+        } elseif (count($action['signup']) >= ($action['number'] + $action['candidate'])) { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
             redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名");
         }
 
@@ -125,6 +125,15 @@ class Leebuyer_signup_data
         $TadDataCenter = new TadDataCenter('leebuyer_signup');
         $TadDataCenter->set_col('id', $id); //綁定這個值
         $TadDataCenter->saveData();
+
+        // 若是超過名額，註記為「候補」
+        $action = Leebuyer_signup_actions::get($action_id);
+        $action['signup'] = self::get_all($action_id);
+        if (count($action['signup']) > $action['number']) {
+            $TadDataCenter->set_col('data_id', $id); //綁定這個值
+            //儲存資料
+            $TadDataCenter->saveCustomData(['tag' => ['候補']]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
+        }
 
         return $id;
     }
@@ -276,6 +285,9 @@ class Leebuyer_signup_data
             $TadDataCenter->set_col('id', $data['id']); //此id為重新迴圈跑完後之id
             $data['tdc'] = $TadDataCenter->getData(); //getData()取得xx_leebuyer_signup_data_center資料，綁定的相關資料，現在是綁定id的相關資料
             $data['action'] = Leebuyer_signup_actions::get($data['action_id'], true);
+            //列出候補之小標籤(之後去修改 templates\op_leebuyer_signup_actions_show.tpl，在日期欄位加入候補標記 )
+            $TadDataCenter->set_col('data_id', $data['id']); //綁定data_id
+            $data['tag'] = $TadDataCenter->getData('tag', 0); //取出第0筆資料，只有一筆不會是陣列
 
             if ($_SESSION['api_mode'] or $auto_key) {
                 $data_arr[] = $data;

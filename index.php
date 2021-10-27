@@ -16,9 +16,16 @@ $op = Request::getString('op');
 $id = Request::getInt('id');
 $action_id = Request::getInt('action_id');
 $accept = Request::getInt('accept');
+$files_sn = Request::getInt('files_sn');
 
 /*-----------執行動作判斷區----------*/
 switch ($op) {
+
+    // 下載檔案
+    case "tufdl":
+        $TadUpFiles = new TadUpFiles('leebuyer_signup');
+        $TadUpFiles->add_file_counter($files_sn);
+        exit;
 
     //新增活動表單
     case 'leebuyer_signup_actions_create':
