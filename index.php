@@ -4,6 +4,7 @@
 use Xmf\Request; //是用來接收並過濾各種外來變數用的物件
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
+use XoopsModules\Tadtools\TadUpFiles;
 use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/

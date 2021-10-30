@@ -11,8 +11,10 @@
 <div class="alert alert-info">
     <{$detail}>
 </div>
+<div class="container img-thumbnail">
+    <{$files}>
+</div>
 
-<{$files}>
 
 <h4 class="my">
     已報名資料
@@ -26,8 +28,8 @@
 <table class="table" data-toggle="table" data-pagination="true" data-search="true" data-mobile-responsive="true">
     <thead>
         <tr>
-            <{foreach from=$signup.0.tdc key=col_name item=user name=tdc}>  <!--from=$signup.0.tdc來源資料已寫到第3層-->
-        <th data-sortable="true"><{$col_name}></th>
+            <{foreach from=$titles item=title}>  <!--from=$signup.0.tdc來源資料已寫到第3層-->
+        <th data-sortable="true"><{$title}></th>
             <{/foreach}>
 
             <th data-sortable="true">錄取</th>
@@ -37,7 +39,8 @@
     <tbody>
         <{foreach from=$signup item=signup_data}>
             <tr>
-                <{foreach from=$signup_data.tdc key=col_name item=user_data}>
+                <{foreach from=$titles item=title}>
+                    <{assign var=user_data value=$signup_data.tdc.$title}>
                     <td>
                         <{if $smarty.session.can_add && $uid == $now_uid || $signup_data.uid == $now_uid}>  <!---是管理員看到完整資料或此筆資料uid跟登入資料uid相同，意指這筆資料是我自己的--->
                             <{foreach from=$user_data item=data}>
@@ -48,7 +51,7 @@
                         <{else}>
                             <div>
                                 <!---有登入但這筆資料不是我的--->
-                                <{if strpos($col_name, '姓名')!==false}>    <!---strpos()函數返回字符串在另一個字符串中第一次出現的位置。如果沒有找到該字符串，則返回 false。此例是在$col_name內找姓名，假如姓名有的話就取代，不是姓名就****--->
+                                <{if strpos($title, '姓名')!==false}>    <!---strpos()函數返回字符串在另一個字符串中第一次出現的位置。如果沒有找到該字符串，則返回 false。此例是在$col_name內找姓名，假如姓名有的話就取代，不是姓名就****--->
                                     <{if preg_match("/[a-z]/i", $user_data.0)}>
                                         <{$user_data.0|regex_replace:"/[a-z]/":"*"}>
                                     <{else}>
@@ -114,5 +117,25 @@
     <div class="bar">
         <a href="javascript:del_action('<{$id}>')" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>刪除活動</a>
         <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>&type=signup" class="btn btn-primary"><i class="fa fa-file-o" aria-hidden="true"></i>匯出報名名單CSV</a>
     </div>
+
+    <form action="index.php" method="post" id="myForm" enctype="multipart/form-data">
+        <div class="input-group">
+            <div class="input-group-prepend input-group-addon">
+                <span class="input-group-text">匯入報名名單CSV</span>
+            </div>
+            <input type="file" name="csv" class="form-control" accept="text/csv">
+            <div class="input-group-append input-group-btn">
+                <button type="submit" class="btn btn-primary">送出</button>
+            </div>
+        </div>
+
+        <input type="hidden" name="op" value="<{$next_op}>">
+        <div class="bar">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save" aria-hidden="true"></i> 儲存
+            </button>
+        </div>
+    </form>
 <{/if}>

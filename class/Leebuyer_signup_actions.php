@@ -178,6 +178,25 @@ class Leebuyer_signup_actions//命名與檔名相同
         $now_uid = $xoopsUser ? $xoopsUser->uid() : 0;
         $xoopsTpl->assign("now_uid", $now_uid);
 
+        //取得tdc之標題欄所有資料
+        $titles = self::get_tdc_title($data['setup']);
+        $xoopsTpl->assign("titles", $titles);
+
+    }
+//取得tdc之標題
+    public static function get_tdc_title($setup = '')
+    {
+        $titles = [];
+
+        // 先找出選項類的題目
+        $setup_items = explode("\n", $setup);
+        foreach ($setup_items as $setup_item) {
+            if (substr($setup_item, 0, 1) != '#') {
+                $items = explode(",", $setup_item);
+                $titles[] = str_replace(['*', "\r", ' '], '', $items[0]);
+            }
+        }
+        return $titles;
     }
 
     //更新某一筆資料
