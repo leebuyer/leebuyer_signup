@@ -15,8 +15,6 @@ $id = Request::getInt('id');
 
 $type = Request::getString('type');
 
-$action = Leebuyer_signup_actions::get($id);
-
 //取得活動詳細資料
 $action = Leebuyer_signup_actions::get($id);
 
@@ -26,7 +24,7 @@ if ($action['uid'] != $xoopsUser->uid()) {
 
 $csv = [];
 
-$head_row = explode("\n", $action['setup']); //用換行符號把$action['setup']拆開，會成一陣列
+$head_row = explode("\n", $action['setup']); //explode() 函數把字符串分割為數組。用換行符號把$action['setup']拆開，會成一陣列
 
 $head = [];
 foreach ($head_row as $head_data) {
@@ -40,11 +38,11 @@ $head[] = '錄取';
 $head[] = '報名日期';
 $head[] = '身分';
 
-$csv[] = implode(',', $head); //標題第一行過濾完
+$csv[] = implode(',', $head); //implode() 函數把數組元素組合為一個字符串。標題第一行過濾完
 //產生匯入檔
 if ($type == 'signup') {
     $signup = Leebuyer_signup_data::get_all($action['id']);
-    foreach ($signup as $signup_data) {
+    foreach ($signup as $signup_data) { //$signup_data(是陣列)每一個人一筆玩整資料
         $iteam = []; //其中每一個項目
         foreach ($signup_data['tdc'] as $user_data) {
             $iteam[] = implode(',', $user_data);
