@@ -135,7 +135,7 @@ class Leebuyer_signup_data
     //以流水號秀出某筆資料內容
     public static function show($id = '')
     {
-        global $xoopsDB, $xoopsTpl, $xoopsUser;
+        global $xoopsTpl, $xoopsUser;
 
         if (empty($id)) {
             return;
@@ -476,6 +476,184 @@ class Leebuyer_signup_data
     </html>
     ";
         return $content;
+    }
+
+//預覽csv
+    public static function preview_csv($action_id)
+    {
+        global $xoopsTpl;
+
+        //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
+        if (!$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action = Leebuyer_signup_actions::get($action_id);
+        $xoopsTpl->assign("action", $action);
+
+        //製作標題(tadtools/class/TadDataCenter.php 必須是 2021/10/29 日以後的版本，可以改用下列方式更簡單)
+        $head_row = explode("\n", $action['setup']); //用換行符號把$action['setup']拆開，會成一陣列
+        $head = [];
+        foreach ($head_row as $head_data) {
+            $cols = explode(',', $head_data);
+            if (strpos($cols[0], '#') === false) { //strpos()在此字串$cols[0]找是否有#的符號。沒找到跑下面不含#字號把他放入標題，有#字號是註解
+                $head[] = str_replace('*', '', trim($cols[0])); //搜尋*符號，取代成空白
+                $type[] = trim($cols[1]);
+            }
+        }
+
+        //取得標題及類型
+        // $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        // $head = $TadDataCenter->getAllColItems($action['setup']);
+        // $type = $TadDataCenter->getAllColItems($action['setup'], 'type');
+
+        $xoopsTpl->assign("head", $head);
+        $xoopsTpl->assign("type", $type);
+
+        //抓取內容
+        $preview_data = [];
+        $handle = fopen($_FILES['csv']['tmp_name'], "r") or die("無法開啟"); //在樣板檔的input表單輸入框<input type="file" name="csv" class="form-control" accept="text/csv">此地$_FILES['csv']也要寫csv
+        while (($val = fgetcsv($handle, 1000)) !== false) {
+            $preview_data[] = mb_convert_encoding($val, 'UTF-8', 'big5'); //轉碼
+        }
+        fclose($handle);
+        $xoopsTpl->assign("preview_data", $preview_data);
+
+        //加入Token安全機制
+        include_once $GLOBALS['xoops']->path('class/xoopsformloader.php');
+        $token = new \XoopsFormHiddenToken();
+        $token_form = $token->render();
+        $xoopsTpl->assign("token_form", $token_form);
+
+    }
+
+    //批次匯入csv
+    public static function import_csv($action_id)
+    {
+        global $xoopsDB, $xoopsUser;
+
+        //XOOPS表單安全檢查
+        Utility::xoops_security_check();
+
+        //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
+        if (!$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action_id = (int) $action_id;
+        $uid = $xoopsUser->uid();
+
+        $action = Leebuyer_signup_actions::get($action_id);
+
+        $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        //Utility::dd($_POST['tdc']);
+        foreach ($_POST['tdc'] as $tdc) {
+            $sql = "insert into `" . $xoopsDB->prefix("leebuyer_signup_data") . "` (
+                `action_id`,
+                `uid`,
+                `signup_date`,
+                `accept`
+                ) values(
+                '{$action_id}',
+                '{$uid}',
+                now(),
+                '1'
+            )";
+            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+            //取得最後新增資料的流水編號(報名之後的id)
+            $id = $xoopsDB->getInsertId();
+
+            //儲存資料
+
+            $TadDataCenter->set_col('id', $id); //綁定這個值
+            $TadDataCenter->saveCustomData($tdc);
+
+            $action['signup'] = self::get_all($action_id);
+            // 若是超過名額，註記為「候補」
+            if (count($action['signup']) > $action['number']) {
+                $TadDataCenter->set_col('data_id', $id); //綁定這個值
+                //儲存資料
+                $TadDataCenter->saveCustomData(['tag' => ['候補']]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
+            }
+
+        }
+    }
+
+    //預覽excel
+    public static function preview_excel($action_id)
+    {
+        global $xoopsTpl;
+
+        //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
+        if (!$_SESSION['can_add']) {
+            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+        }
+
+        $action = Leebuyer_signup_actions::get($action_id);
+        $xoopsTpl->assign("action", $action);
+
+        //製作標題(tadtools/class/TadDataCenter.php 必須是 2021/10/29 日以後的版本，可以改用下列方式更簡單)
+        $head_row = explode("\n", $action['setup']); //用換行符號把$action['setup']拆開，會成一陣列
+        $head = [];
+        foreach ($head_row as $head_data) {
+            $cols = explode(',', $head_data);
+            if (strpos($cols[0], '#') === false) { //strpos()在此字串$cols[0]找是否有#的符號。沒找到跑下面不含#字號把他放入標題，有#字號是註解
+                $head[] = str_replace('*', '', trim($cols[0])); //搜尋*符號，取代成空白
+                $type[] = trim($cols[1]);
+            }
+        }
+
+        //取得標題及類型
+        // $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        // $head = $TadDataCenter->getAllColItems($action['setup']);
+        // $type = $TadDataCenter->getAllColItems($action['setup'], 'type');
+
+        $xoopsTpl->assign("head", $head);
+        $xoopsTpl->assign("type", $type);
+
+        //抓取內容
+        $preview_data = [];
+
+        require_once XOOPS_ROOT_PATH . '/modules/tadtools/vendor/phpoffice/phpexcel/Classes/PHPExcel/IOFactory.php';
+        $reader = \PHPExcel_IOFactory::createReader('Excel2007');
+        $PHPExcel = $reader->load($_FILES['excel']['tmp_name']); // 檔案名稱
+        $sheet = $PHPExcel->getSheet(0); // 讀取第一個工作表(編號從 0 開始)
+        $maxCell = $PHPExcel->getActiveSheet()->getHighestRowAndColumn();
+        $maxColumn = self::getIndex($maxCell['column']);
+        // 一次讀一列
+        for ($row = 1; $row <= $maxCell['row']; $row++) {
+            // 讀出每一格
+            for ($column = 0; $column <= $maxColumn; $column++) {
+                $preview_data[$row][$column] = $sheet->getCellByColumnAndRow($column, $row)->getCalculatedValue();
+            }
+        }
+
+        $xoopsTpl->assign("preview_data", $preview_data);
+
+        //加入Token安全機制
+        include_once $GLOBALS['xoops']->path('class/xoopsformloader.php');
+        $token = new \XoopsFormHiddenToken();
+        $token_form = $token->render();
+        $xoopsTpl->assign("token_form", $token_form);
+
+    }
+
+    // 將文字轉為數字
+    private static function getIndex($let)
+    {
+        // Iterate through each letter, starting at the back to increment the value
+        for ($num = 0, $i = 0; $let != ''; $let = substr($let, 0, -1), $i++) {
+            $num += (ord(substr($let, -1)) - 65) * pow(26, $i);
+        }
+
+        return $num;
+    }
+
+    //批次匯入excel
+    public static function import_excel($action_id)
+    {
+        self::import_csv($action_id);
     }
 
 }

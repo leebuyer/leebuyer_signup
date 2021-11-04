@@ -118,24 +118,36 @@
         <a href="javascript:del_action('<{$id}>')" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>刪除活動</a>
         <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
         <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>&type=signup" class="btn btn-primary"><i class="fa fa-file-o" aria-hidden="true"></i>匯出報名名單CSV</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>&type=signup" class="btn btn-success"><i class="fa fa-file-excel-o" aria-hidden="true"></i>匯出報名名單EXCEL</a>
     </div>
 
     <form action="index.php" method="post" id="myForm" enctype="multipart/form-data">
         <div class="input-group">
             <div class="input-group-prepend input-group-addon">
-                <span class="input-group-text">匯入報名名單CSV</span>
+                <span class="input-group-text">匯入報名名單【CSV】</span>
             </div>
             <input type="file" name="csv" class="form-control" accept="text/csv">
             <div class="input-group-append input-group-btn">
-                <button type="submit" class="btn btn-primary">送出</button>
+                <input type="hidden" name="id" value=<{$id}>>
+                <input type="hidden" name="op" value="leebuyer_signup_data_preview_csv"><!---要到index.php加入流程leebuyer_signup_data_preview_csv--->
+                <button type="submit" class="btn btn-primary">匯入CSV</button>
+                <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>" class="btn btn-secondary border-left"><i class="fa fa-file-o" aria-hidden="true"></i>下載CSV匯入格式檔</a>
             </div>
         </div>
+    </form>
 
-        <input type="hidden" name="op" value="<{$next_op}>">
-        <div class="bar">
-            <button type="submit" class="btn btn-primary">
-                <i class="fa fa-save" aria-hidden="true"></i> 儲存
-            </button>
+    <form action="index.php" method="post" id="myForm" enctype="multipart/form-data" class="my-1">
+        <div class="input-group">
+            <div class="input-group-prepend input-group-addon">
+                <span class="input-group-text">匯入報名名單【EXCEL】</span>
+            </div>
+            <input type="file" name="excel" class="form-control" accept=".xlsx">
+            <div class="input-group-append input-group-btn">
+                <input type="hidden" name="id" value=<{$id}>>
+                <input type="hidden" name="op" value="leebuyer_signup_data_preview_excel"><!---要到index.php加入流程leebuyer_signup_data_preview_csv--->
+                <button type="submit" class="btn btn-primary">匯入EXCEL</button>
+                <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>" class="btn btn-secondary border-left"><i class="fa fa-file-excel-o" aria-hidden="true"></i>下載EXCEL匯入格式檔</a>
+            </div>
         </div>
     </form>
 <{/if}>

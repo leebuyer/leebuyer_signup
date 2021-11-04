@@ -115,6 +115,28 @@ switch ($op) {
         redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_actions_edit&id=$new_id", 3, "已成功複製活動！");
         exit;
 
+    //修改預覽報名表單(csv)
+    case 'leebuyer_signup_data_preview_csv':
+        Leebuyer_signup_data::preview_csv($id);
+        break;
+
+    //批次匯入csv
+    case 'leebuyer_signup_data_import_csv':
+        Leebuyer_signup_data::import_csv($id);
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "已成功匯入報名資料！");
+        exit;
+
+    //修改預覽報名表單(excel)
+    case 'leebuyer_signup_data_preview_excel':
+        Leebuyer_signup_data::preview_excel($id);
+        break;
+
+    //批次匯入excel
+    case 'leebuyer_signup_data_import_excel':
+        Leebuyer_signup_data::import_excel($id);
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "已成功匯入報名資料！");
+        exit;
+
     default:
         if (empty($id)) {
             Leebuyer_signup_actions::index($xoopsModuleConfig['only_enable']); //Leebuyer_signup_actions 是類別（class），:: 是呼叫類別的靜態方法（無須用new去進行實例化），index()就是類別的靜態方法（函式）
