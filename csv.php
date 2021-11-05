@@ -45,7 +45,7 @@ if ($type == 'signup') {
     foreach ($signup as $signup_data) { //$signup_data(是陣列)每一個人一筆玩整資料
         $iteam = []; //其中每一個項目
         foreach ($signup_data['tdc'] as $user_data) {
-            $iteam[] = implode(',', $user_data);
+            $iteam[] = implode('|', $user_data);
         }
         if ($signup_data['accept'] === '1') {
             $iteam[] = '錄取';
