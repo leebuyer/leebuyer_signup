@@ -15,7 +15,7 @@
                 <{if $smarty.foreach.preview_data.iteration > 1}>
                     <tr>
                         <{foreach from=$data key=j item=val}>
-                            <{assign var=title value=$head.$j}><!----每跑一格設定一個變數var=title，他的值$head(陣列)，抓標題第一個。跑第二格，$j就等於二，去抓取$head第二個--->
+                            <{assign var=title value=$head.$j}><!---每跑一格設定一個變數var=title，他的值$head(陣列)，抓標題第一個。跑第二格，$j就等於二，去抓取$head第二個--->
                             <{assign var=input_type value=$type.$j}>
                             <{if $title!=''}>
                                 <td>
