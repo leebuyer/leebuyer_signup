@@ -24,19 +24,8 @@ if ($action['uid'] != $xoopsUser->uid()) {
 
 $csv = [];
 
-$head_row = explode("\n", $action['setup']); //explode() 函數把字符串分割為數組。用換行符號把$action['setup']拆開，會成一陣列
-
-$head = [];
-foreach ($head_row as $head_data) {
-    $cols = explode(',', $head_data);
-    if (strpos($cols[0], '#') === false) { //strpos()在此字串$cols[0]找是否有#的符號。沒找到跑下面不含#字號把他放入標題，有#字號是註解
-        $head[] = str_replace('*', '', trim($cols[0])); //搜尋*符號，取代成空白
-    }
-}
-
-$head[] = '錄取';
-$head[] = '報名日期';
-$head[] = '身分';
+//標題列
+$head = Leebuyer_signup_data::get_head($action);
 
 $csv[] = implode(',', $head); //implode() 函數把數組元素組合為一個字符串。標題第一行過濾完
 //產生匯入檔
@@ -62,7 +51,7 @@ if ($type == 'signup') {
 }
 
 $content = implode("\n", $csv); //用換行符號把陣列組合起來
-$content = mb_convert_encoding($content, 'big5');
+$content = mb_convert_encoding($content, 'big5'); //轉碼成big5
 
 header("Content-type: text/csv");
 header("Content-Disposition: attachment; filename= {$action['title']}報名名單.csv");

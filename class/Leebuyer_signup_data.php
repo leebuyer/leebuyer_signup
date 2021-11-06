@@ -254,19 +254,21 @@ class Leebuyer_signup_data
     }
 
     //取得所有資料陣列
-    public static function get_all($action_id = '', $uid = '', $auto_key = false) //在本檔案之public static function index()處有用到get_all()，故要付予$action值
+    public static function get_all($action_id = '', $uid = '', $auto_key = false, $only_accept = false) //在本檔案之public static function index()處有用到get_all()，故要付予$action值
 
     {
         global $xoopsDB, $xoopsUser;
         $myts = \MyTextSanitizer::getInstance();
 
+        $and_accept = $only_accept ? "and `accept`='1'" : '';
+
         if ($action_id) {
-            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' order by `signup_date` desc";
+            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `action_id`='$action_id' $and_accept order by `signup_date` desc";
         } else {
             if (!$_SESSION['can_add'] or !$uid) {
                 $uid = $xoopsUser ? $xoopsUser->uid() : 0;
             }
-            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `uid`='$uid' order by `signup_date`";
+            $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_data") . "` where `uid`='$uid' $and_accept order by `signup_date`";
         }
 
         $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -492,20 +494,7 @@ class Leebuyer_signup_data
         $xoopsTpl->assign("action", $action);
 
         //製作標題(tadtools/class/TadDataCenter.php 必須是 2021/10/29 日以後的版本，可以改用下列方式更簡單)
-        $head_row = explode("\n", $action['setup']); //用換行符號把$action['setup']拆開，會成一陣列
-        $head = [];
-        foreach ($head_row as $head_data) {
-            $cols = explode(',', $head_data);
-            if (strpos($cols[0], '#') === false) { //strpos()在此字串$cols[0]找是否有#的符號。沒找到跑下面不含#字號把他放入標題，有#字號是註解
-                $head[] = str_replace('*', '', trim($cols[0])); //搜尋*符號，取代成空白
-                $type[] = trim($cols[1]);
-            }
-        }
-
-        //取得標題及類型
-        // $TadDataCenter = new TadDataCenter('leebuyer_signup');
-        // $head = $TadDataCenter->getAllColItems($action['setup']);
-        // $type = $TadDataCenter->getAllColItems($action['setup'], 'type');
+        list($head, $type) = self::get_head($action, true, true);
 
         $xoopsTpl->assign("head", $head);
         $xoopsTpl->assign("type", $type);
@@ -594,15 +583,7 @@ class Leebuyer_signup_data
         $xoopsTpl->assign("action", $action);
 
         //製作標題(tadtools/class/TadDataCenter.php 必須是 2021/10/29 日以後的版本，可以改用下列方式更簡單)
-        $head_row = explode("\n", $action['setup']); //用換行符號把$action['setup']拆開，會成一陣列
-        $head = [];
-        foreach ($head_row as $head_data) {
-            $cols = explode(',', $head_data);
-            if (strpos($cols[0], '#') === false) { //strpos()在此字串$cols[0]找是否有#的符號。沒找到跑下面不含#字號把他放入標題，有#字號是註解
-                $head[] = str_replace('*', '', trim($cols[0])); //搜尋*符號，取代成空白
-                $type[] = trim($cols[1]);
-            }
-        }
+        list($head, $type) = self::get_head($action, true, true);
 
         //取得標題及類型
         // $TadDataCenter = new TadDataCenter('leebuyer_signup');
@@ -654,6 +635,35 @@ class Leebuyer_signup_data
     public static function import_excel($action_id)
     {
         self::import_csv($action_id);
+    }
+
+    //取得報名的標題欄
+    public static function get_head($action, $return_type = false, $only_tdc = false)
+    {
+        //標題列
+        $head_row = explode("\n", $action['setup']); //explode() 函數把字符串分割為數組。用換行符號把$action['setup']拆開，會成一陣列
+
+        $head = $type = [];
+        foreach ($head_row as $head_data) {
+            $cols = explode(',', $head_data);
+            if (strpos($cols[0], '#') === false) { //strpos()在此字串$cols[0]找是否有#的符號。沒找到跑下面不含#字號把他放入標題，有#字號是註解
+                $head[] = str_replace('*', '', trim($cols[0])); //搜尋*符號，取代成空白
+                $type[] = trim($cols[1]);
+            }
+        }
+
+        if (!$only_tdc) {
+            $head[] = '錄取';
+            $head[] = '報名日期';
+            $head[] = '身份';
+        }
+
+        if ($return_type) {
+            return [$head, $type];
+        } else {
+            return $head;
+        }
+
     }
 
 }

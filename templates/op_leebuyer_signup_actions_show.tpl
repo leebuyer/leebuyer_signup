@@ -11,6 +11,16 @@
 <div class="alert alert-info">
     <{$detail}>
 </div>
+
+<!-- 無痛產生PDF檔AddToAny BEGIN -->
+<div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_printfriendly"></a>
+</div>
+<script async src="https://static.addtoany.com/menu/page.js"></script>
+<!-- AddToAny END -->
+
 <div class="container img-thumbnail">
     <{$files}>
 </div>
@@ -119,6 +129,10 @@
         <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
         <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>&type=signup" class="btn btn-primary"><i class="fa fa-file-o" aria-hidden="true"></i>匯出報名名單CSV</a>
         <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>&type=signup" class="btn btn-success"><i class="fa fa-file-excel-o" aria-hidden="true"></i>匯出報名名單EXCEL</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/pdf.php?id=<{$id}>" class="btn btn-danger"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>匯出報名名單PDF</a>
+    </div>
+    <div class="bar">
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/pdf_signup.php?id=<{$id}>" class="btn btn-danger"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>匯出簽到表PDF</a>
     </div>
 
     <form action="index.php" method="post" id="myForm" enctype="multipart/form-data">

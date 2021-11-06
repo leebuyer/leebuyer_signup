@@ -76,17 +76,7 @@ $objActSheet->setTitle($title); //設定標題
 $objPHPExcel->createSheet(); //建立新的工作表，上面那三行再來一次，編號要改
 
 // 抓出標題資料
-$head_row = explode("\n", $action['setup']);
-$head = [];
-foreach ($head_row as $head_data) {
-    $cols = explode(',', $head_data);
-    if (strpos($cols[0], '#') === false) {
-        $head[] = str_replace('*', '', trim($cols[0]));
-    }
-}
-$head[] = '錄取';
-$head[] = '報名日期';
-$head[] = '身份';
+$head = Leebuyer_signup_data::get_head($action);
 $row = 1;
 foreach ($head as $column => $value) {
     $objActSheet->setCellValueByColumnAndRow($column, $row, $value); //setCellValueByColumnAndRow取得要套用的那些欄位直欄從0開始，橫列從1開始

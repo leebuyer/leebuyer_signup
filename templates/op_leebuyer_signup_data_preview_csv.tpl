@@ -12,32 +12,32 @@
         </thead>
         <tbody>
             <{foreach from=$preview_data key=i item=data name=preview_data}>
-            <{if $smarty.foreach.preview_data.iteration > 1}>
-                <tr>
-                    <{foreach from=$data key=j item=val}>
-                        <{assign var=title value=$head.$j}><!----每跑一格設定一個變數var=title，他的值$head(陣列)，抓標題第一個。跑第二格，$j就等於二，去抓取$head第二個--->
-                        <{assign var=input_type value=$type.$j}>
-                        <{if $title!=''}>
-                            <td>
-                                <{if $input_type=="checkbox"}>
-                                <{assign var=val_arr value='|'|explode:$val}>
-                                    <{foreach from=$val_arr item=val}>
-                                        <div class="form-check-inline checkbox-inline">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="checkbox" name="tdc[<{$i}>][<{$title}>][]" value="<{$val}>" checked>
-                                                <{$val}>
-                                            </label>
-                                        </div>
-                                    <{/foreach}>
-                                <{else}>
-                                    <input type="text" name="tdc[<{$i}>][<{$title}>]" value="<{$val}>" class="form-control form-control-sm">
-                                <{/if}>
-                            </td>
-                        <{/if}>
-                    <{/foreach}>
-                </tr>
-            <{/if}>
-        <{/foreach}>
+                <{if $smarty.foreach.preview_data.iteration > 1}>
+                    <tr>
+                        <{foreach from=$data key=j item=val}>
+                            <{assign var=title value=$head.$j}><!----每跑一格設定一個變數var=title，他的值$head(陣列)，抓標題第一個。跑第二格，$j就等於二，去抓取$head第二個--->
+                            <{assign var=input_type value=$type.$j}>
+                            <{if $title!=''}>
+                                <td>
+                                    <{if $input_type=="checkbox"}>
+                                    <{assign var=val_arr value='|'|explode:$val}>
+                                        <{foreach from=$val_arr item=val}>
+                                            <div class="form-check-inline checkbox-inline">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" name="tdc[<{$i}>][<{$title}>][]" value="<{$val}>" checked>
+                                                    <{$val}>
+                                                </label>
+                                            </div>
+                                        <{/foreach}>
+                                    <{else}>
+                                        <input type="text" name="tdc[<{$i}>][<{$title}>]" value="<{$val}>" class="form-control form-control-sm">
+                                    <{/if}>
+                                </td>
+                            <{/if}>
+                        <{/foreach}>
+                    </tr>
+                <{/if}>
+            <{/foreach}>
         </tbody>
     </table>
     <{$token_form}>
