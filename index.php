@@ -18,6 +18,8 @@ $id = Request::getInt('id');
 $action_id = Request::getInt('action_id');
 $accept = Request::getInt('accept');
 $files_sn = Request::getInt('files_sn');
+$pdf_setup_col = Request::getString('pdf_setup_col');
+$file = Request::getWord('file', 'pdf');
 
 /*-----------執行動作判斷區----------*/
 switch ($op) {
@@ -135,6 +137,17 @@ switch ($op) {
     case 'leebuyer_signup_data_import_excel':
         Leebuyer_signup_data::import_excel($id);
         redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "已成功匯入報名資料！");
+        break;
+
+    //進行pdf的匯出設定
+    case 'leebuyer_signup_data_pdf_setup':
+        Leebuyer_signup_data::pdf_setup($id);
+        break;
+
+    //儲存pdf的匯出設定
+    case 'leebuyer_signup_data_pdf_setup_save':
+        Leebuyer_signup_data::pdf_setup_save($action_id, $pdf_setup_col);
+        header("location: {$file}_signup.php?id=$action_id");
         exit;
 
     default:

@@ -3,11 +3,11 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>活動名稱</th>
-            <th>活動日期</th>
-            <th>報名截止日</th>
-            <th>已報名人數</th>
-            <th>功能</th>
+            <th nowrap class="c">活動名稱</th>
+            <th nowrap class="c">活動日期</th>
+            <th nowrap class="c">報名截止日</th>
+            <th nowrap class="c">已報名人數</th>
+            <th nowrap class="c">功能</th>
         </tr>
     </thead>
     <tbody>
@@ -28,11 +28,10 @@
                     <{if $action.candidate}><span data-toggle="tooltip" title="可候補名額">(<{$action.candidate}>)</span><{/if}>
                 </td>
 
-                <td>
+                <td nowrap>
                     <{if $smarty.session.can_add && ($action.uid==$now_uid || $smarty.session.leebuyer_signup_adm)}>
-                        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
-                        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_copy&id=<{$action.id}>" class="btn btn-sm btn-secondary"><i class="fa fa-copy" aria-hidden="true"></i>複製活動</a>
-                        <a href="<{$xoops_url}>/modules/leebuyer_signup/html.php?id=<{$action.id}>" class="btn btn-sm btn-primary"><i class="fa fa-html5" aria-hidden="true"></i>匯出HTML</a>
+                        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$action.id}>" class="btn btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯</a>
+                        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_copy&id=<{$action.id}>" class="btn btn-sm btn-secondary"><i class="fa fa-copy" aria-hidden="true"></i>複製</a>
                     <{/if}>
                     <{if $action.enable && ($action.number + $action.candidate)> $action.signup|@count && $xoops_isuser && $action.end_date|strtotime >= $smarty.now}>   <!--end_date時間不能做比較，用strtotime把日期轉換成時間戳記-->
                         <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_create&action_id=<{$action.id}>" class="btn btn-sm btn-info"><i class="fa fa-plus" aria-hidden="true"></i>立即報名</a>

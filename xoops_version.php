@@ -36,7 +36,7 @@ $modversion['system_menu'] = 1;
 
 //---模組資料表架構---//
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-$modversion['tables'] = ['leebuyer_signup_actions', 'leebuyer_signup_data', 'leebuyer_signup_data_center'，'leebuyer_signup_files_center']; //$modversion['tables']是反安裝時才會用到
+$modversion['tables'] = ['leebuyer_signup_actions', 'leebuyer_signup_data', 'leebuyer_signup_data_center', 'leebuyer_signup_files_center']; //$modversion['tables']是反安裝時才會用到
 
 //---後台管理介面設定---//
 $modversion['hasAdmin'] = 1;

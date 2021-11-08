@@ -39,11 +39,11 @@
     <thead>
         <tr>
             <{foreach from=$titles item=title}>  <!--from=$signup.0.tdc來源資料已寫到第3層-->
-        <th data-sortable="true"><{$title}></th>
+        <th data-sortable="true" nowrap class="c"><{$title}></th>
             <{/foreach}>
 
-            <th data-sortable="true">錄取</th>
-            <th data-sortable="true">報名日期</th>
+            <th data-sortable="true" nowrap class="c">錄取</th>
+            <th data-sortable="true" nowrap class="c">報名日期</th>
         </tr>
     </thead>
     <tbody>
@@ -125,14 +125,19 @@
 
 <{if $smarty.session.can_add && $uid == $now_uid}>
     <div class="bar">
-        <a href="javascript:del_action('<{$id}>')" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i>刪除活動</a>
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>&type=signup" class="btn btn-primary"><i class="fa fa-file-o" aria-hidden="true"></i>匯出報名名單CSV</a>
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>&type=signup" class="btn btn-success"><i class="fa fa-file-excel-o" aria-hidden="true"></i>匯出報名名單EXCEL</a>
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/pdf.php?id=<{$id}>" class="btn btn-danger"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>匯出報名名單PDF</a>
-    </div>
-    <div class="bar">
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/pdf_signup.php?id=<{$id}>" class="btn btn-danger"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>匯出簽到表PDF</a>
+        <a href="javascript:del_action('<{$id}>')" class="btn  btn-sm btn-danger"><i class="fa fa-times" aria-hidden="true"></i>刪除活動</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn  btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/html.php?id=<{$id}>" class="btn  btn-sm btn-primary"><i class="fa fa-html5" aria-hidden="true"></i>匯出HTML</a>
+
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_pdf_setup&id=<{$id}>" class="btn  btn-sm btn-info"><i class="fa fa-save" aria-hidden="true"></i>產生簽到表</a>
+
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="#" class="btn  btn-sm btn-secondary"><i class="fa fa-file-text-o" aria-hidden="true"></i>匯出報名名單</a>
+            <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>&type=signup" class="btn btn-sm btn-info border-left"><i class="fa fa-file-o" aria-hidden="true"></i>CSV</a>
+            <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>&type=signup" class="btn btn-sm btn-success border-left"><i class="fa fa-file-excel-o" aria-hidden="true"></i>EXCEL</a>
+            <a href="<{$xoops_url}>/modules/leebuyer_signup/pdf.php?id=<{$id}>" class="btn btn-sm btn-danger border-left"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>PDF</a>
+            <a href="<{$xoops_url}>/modules/leebuyer_signup/word.php?id=<{$id}>" class="btn btn-sm btn-primary border-left"><i class="fa fa-file-word-o" aria-hidden="true"></i>WORD</a>
+        </div>
     </div>
 
     <form action="index.php" method="post" id="myForm" enctype="multipart/form-data">

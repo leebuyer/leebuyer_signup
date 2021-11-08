@@ -67,4 +67,4 @@ $pdf->AddPage(); //新增頁面，一定要有，否則內容出不來
 
 $pdf->writeHTML($html_content);
 //PDF內容設定
-$pdf->Output('檔案標題.pdf', 'D');
+$pdf->Output("{$title}.pdf", 'D');

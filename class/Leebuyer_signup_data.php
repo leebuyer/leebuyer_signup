@@ -9,6 +9,7 @@ use XoopsModules\Tadtools\BootstrapTable;
 use XoopsModules\Tadtools\FormValidator;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\TadDataCenter;
+use XoopsModules\Tadtools\Tmt;
 use XoopsModules\Tadtools\Utility;
 
 class Leebuyer_signup_data
@@ -664,6 +665,39 @@ class Leebuyer_signup_data
             return $head;
         }
 
+    }
+
+    //進行pdf的匯出設定
+    public static function pdf_setup($action_id)
+    {
+        global $xoopsTpl;
+
+        $action = Leebuyer_signup_actions::get($action_id);
+        $xoopsTpl->assign("action", $action);
+
+        //儲存資料
+        $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        $TadDataCenter->set_col('pdf_setup_id', $action_id); //綁定這個值
+        $pdf_setup_col = $TadDataCenter->getData('pdf_setup_col', 0); //當0時，抓出來是完整的值
+        $to_arr = explode(',', $pdf_setup_col);
+
+        //製作標題
+        $head_arr = self::get_head($action);
+        $from_arr = array_diff($head_arr, $to_arr);
+        $hidden_arr = [];
+        //(tadtools/class/Tmt.php)public function render($id, $from_arr = [], $to_arr = [], $hidden_arr = ['op' => 'save_tmt'], $only_value = false, $submit = true, $size = '15rem', $from_name = 'repository', $to_name = 'destination')
+        $tmt_box = Tmt::render('pdf_setup_col', $from_arr, $to_arr, $hidden_arr, true, false);
+        $xoopsTpl->assign("tmt_box", $tmt_box);
+    }
+
+    //儲存pdf的匯出設定
+    public static function pdf_setup_save($action_id, $pdf_setup_col = '')
+    {
+        //儲存資料
+        $TadDataCenter = new TadDataCenter('leebuyer_signup');
+        $TadDataCenter->set_col('pdf_setup_id', $action_id); //綁定這個值
+        //儲存資料
+        $TadDataCenter->saveCustomData(['pdf_setup_col' => [$pdf_setup_col]]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
     }
 
 }
