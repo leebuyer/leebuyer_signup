@@ -20,7 +20,7 @@
                             <{if $title!=''}>
                                 <td>
                                     <{if $input_type=="checkbox"}>
-                                    <{assign var=val_arr value='|'|explode:$val}>
+                                    <{assign var=val_arr value='|'|explode:$val}><!---explode第1個參數一定放左邊，第2個放右邊茂號之後--->
                                         <{foreach from=$val_arr item=val}>
                                             <div class="form-check-inline checkbox-inline">
                                                 <label class="form-check-label">
