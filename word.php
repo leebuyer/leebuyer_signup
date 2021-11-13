@@ -22,13 +22,14 @@ $templateProcessor->setValue('action_date', $action['action_date']);
 $templateProcessor->setValue('end_date', $action['end_date']);
 $templateProcessor->setValue('number', $action['number']);
 $templateProcessor->setValue('candidate', $action['candidate']);
-$templateProcessor->setValue('signup', $action['signup_count']);
+$templateProcessor->setValue('signup', count($signup));
 $templateProcessor->setValue('url', XOOPS_URL . "/modules/Leebuyer_signup/index.php?op=Leebuyer_signup_data_create&amp;action_id={$action['id']}");
 
+//已報名名單
 $templateProcessor->cloneRow('id', count($signup)); //要複製幾筆資料。現有3欄，通常找第1欄id，用count算出有幾筆資料，就知道要複製幾筆資料
 
 $i = 1;
-foreach ($signup as $id => $signup_data) { //$signup_data(是陣列)每一個人一筆玩整資料
+foreach ($signup as $id => $signup_data) { //$signup_data(是陣列)每一個人一筆完整資料
     $iteam = [];
     foreach ($signup_data['tdc'] as $head => $user_data) {
         $iteam[] = $head . '：' . implode('、', $user_data);
@@ -36,11 +37,11 @@ foreach ($signup as $id => $signup_data) { //$signup_data(是陣列)每一個人
     $data = implode('<w:br/>', $iteam);
 
     if ($signup_data['accept'] === '1') {
-        $iteam[] = '錄取';
+        $accept = '錄取';
     } elseif ($signup_data['accept'] === '0') {
-        $iteam[] = '未錄取';
+        $accept = '未錄取';
     } else {
-        $iteam[] = '尚未設定';
+        $accept = '尚未設定';
     }
 
     $templateProcessor->setValue("id#{$i}", $id);
