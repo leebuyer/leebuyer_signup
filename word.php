@@ -13,34 +13,34 @@ if (!$_SESSION['can_add']) {
 
 $id = Request::getInt('id');
 $action = Leebuyer_signup_actions::get($id);
+$signup = Leebuyer_signup_data::get_all($action['id']);
 
 $templateProcessor = new TemplateProcessor("signup.docx");
 $templateProcessor->setValue('title', $action['title']);
-$templateProcessor->setValue('detail', str_replace("\n", "</w:t><w:br/><w:t>", strip_tags($action['detail']))); //若標籤值有HTML語法，需用 strip_tags() 去除，若有換行，可用str_replace此方式處理
+$templateProcessor->setValue('detail', strip_tags($action['detail'])); //若標籤值有HTML語法，需用 strip_tags() 去除，若有換行，可用str_replace此方式處理
 $templateProcessor->setValue('action_date', $action['action_date']);
 $templateProcessor->setValue('end_date', $action['end_date']);
 $templateProcessor->setValue('number', $action['number']);
 $templateProcessor->setValue('candidate', $action['candidate']);
-$templateProcessor->setValue('signup', count($action['signup']));
-$templateProcessor->setValue('url', XOOPS_URL . "/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_create&amp;action_id={$action['id']}");
+$templateProcessor->setValue('signup', $action['signup_count']);
+$templateProcessor->setValue('url', XOOPS_URL . "/modules/Leebuyer_signup/index.php?op=Leebuyer_signup_data_create&amp;action_id={$action['id']}");
 
-//產生內容
-$signup = Leebuyer_signup_data::get_all($action['id']);
 $templateProcessor->cloneRow('id', count($signup)); //要複製幾筆資料。現有3欄，通常找第1欄id，用count算出有幾筆資料，就知道要複製幾筆資料
 
 $i = 1;
 foreach ($signup as $id => $signup_data) { //$signup_data(是陣列)每一個人一筆玩整資料
-    $iteam = []; //其中每一個項目
+    $iteam = [];
     foreach ($signup_data['tdc'] as $head => $user_data) {
         $iteam[] = $head . '：' . implode('、', $user_data);
     }
-    $data = implode('<w:br/>', $item); //<w:br/>是word檔的換行符號
+    $data = implode('<w:br/>', $iteam);
+
     if ($signup_data['accept'] === '1') {
-        $sccept = '錄取';
+        $iteam[] = '錄取';
     } elseif ($signup_data['accept'] === '0') {
-        $sccept = '未錄取';
+        $iteam[] = '未錄取';
     } else {
-        $sccept = '尚未設定';
+        $iteam[] = '尚未設定';
     }
 
     $templateProcessor->setValue("id#{$i}", $id);

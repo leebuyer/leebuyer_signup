@@ -49,7 +49,7 @@ if (empty($col_count)) {
     $col_count = 1;
 }
 $h = 15;
-$w = 120 / $col_count;
+$w = 110 / $col_count;
 $maxh = 15;
 $pdf->Cell(15, $h, '編號', 1, 0, "C");
 foreach ($col_arr as $key => $col_name) {
