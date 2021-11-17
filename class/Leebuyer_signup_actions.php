@@ -319,7 +319,7 @@ class Leebuyer_signup_actions//命名與檔名相同
         $limit = $show_number ? "limit 0, $show_number" : ""; //若是有給$show_number，就是要抓出某幾筆
         $sql = "select * from `" . $xoopsDB->prefix("leebuyer_signup_actions") . "` where 1 $and_enable order by `enable`$order $limit";
 
-        if (!$show_number) {
+        if (!$show_number && !$_SESSION['api_mode']) { //api通常不會有分頁，故api模式就不加入分頁
             //Utility::getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
             $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['show_number'], 10); //若是沒有給$show_number，就是要跑偏好設定$xoopsModuleConfig['show_number']，亦是回到之前設定的模式
             $bar = $PageBar['bar'];
@@ -342,7 +342,7 @@ class Leebuyer_signup_actions//命名與檔名相同
             $data['detail'] = $myts->displayTarea($data['detail'], 1, 0, 0, 0, 0); //過濾
             //$data['setup'] = $myts->displayTarea($data['setup'], 0, 1, 0, 1, 1); //過濾
 
-            $data['signup'] = Leebuyer_signup_data::get_all($data['id']); //活動報名完整資料，包含報名人數，此處算亦可，但縣至樣板算人數
+            $data['signup_count'] = count(Leebuyer_signup_data::get_all($data['id'])); //活動報名完整資料，包含報名人數，此處算亦可，但縣至樣板算人數
 
             if ($_SESSION['api_mode'] or $auto_key) { //api_mode，$auto_key控制索引值要採取哪一種
                 $data_arr[] = $data;

@@ -27,7 +27,7 @@ switch ($op) {
     case 'leebuyer_signup_actions_store':
         $id = Leebuyer_signup_actions::store();
         //header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功建立活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MA_LEEBUYER_SIGNUP_CREATE_SUCCESS);
         exit;
 
     //修改用表單
@@ -40,14 +40,14 @@ switch ($op) {
     case 'leebuyer_signup_actions_update':
         Leebuyer_signup_actions::update($id);
         //header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "已成功修改活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MA_LEEBUYER_SIGNUP_UPDATE_SUCCESS);
         exit;
 
     //刪除資料
     case 'leebuyer_signup_actions_destroy':
         Leebuyer_signup_actions::destroy($id);
         //header("location: {$_SERVER['PHP_SELF']}");
-        redirect_header($_SERVER['PHP_SELF'], 3, "已成功刪除活動！");
+        redirect_header($_SERVER['PHP_SELF'], 3, _MA_LEEBUYER_SIGNUP_DESTROY_SUCCESS);
         exit;
 
     default:
@@ -67,5 +67,5 @@ switch ($op) {
 $xoopsTpl->assign('now_op', $op);
 $xoTheme->addStylesheet('/modules/tadtools/css/font-awesome/css/font-awesome.css');
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm4.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/模組目錄/css/module.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/leebuyer_signup/css/module.css');
 require_once __DIR__ . '/footer.php';

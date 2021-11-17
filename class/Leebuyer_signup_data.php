@@ -63,13 +63,13 @@ class Leebuyer_signup_data
 
         //用類別的方式抓出
         $action = Leebuyer_signup_actions::get($action_id, true); //抓筆資料要給它編號$action_id，要在function參數的地方給個入口$action_id，在index.php流程處create也要給$action_id(要看來源是否存在)。true是要過濾
-        $action['signup'] = Leebuyer_signup_data::get_all($action_id);
+        $signup = Leebuyer_signup_data::get_all($action_id);
 
         if (time() > strtotime($action['end_date'])) {
             redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名");
         } elseif (!$action['enable']) {
             redirect_header($_SERVER['PHP_SELF'], 3, "此報名已關閉，無法再進行報名或修改報名");
-        } elseif (count($action['signup']) >= ($action['number'] + $action['candidate']) && $op == 'leebuyer_signup_data_create') { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
+        } elseif ($action['signup_count'] >= ($action['number'] + $action['candidate']) && $op == 'leebuyer_signup_data_create') { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
             redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名");
         }
 

@@ -2,6 +2,7 @@
 namespace XoopsModules\Leebuyer_signup;
 
 use XoopsModules\Leebuyer_signup\Leebuyer_signup_actions;
+use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
 use XoopsModules\Tadtools\SimpleRest;
 
 require dirname(dirname(dirname(__DIR__))) . '/mainfile.php';
@@ -31,11 +32,10 @@ class Leebuyer_signup_api extends SimpleRest
                 $this->user['leebuyer_signup_adm'] = $_SESSION['leebuyer_signup_adm'] = ($this->uid) ? $this->isAdmin('leebuyer_signup') : false;
             }
 
-            // 判斷有無XXX的權限
-            // if (!isset($this->user['權限名'])) {
-            //     $_SESSION['權限名'] = $this->user['權限名'] = $this->powerChk('模組目錄', 權限編號);
-            // }
-
+            // 判斷有無開設活動的權限
+            if (!isset($this->user['can_add'])) {
+                $_SESSION['can_add'] = $this->user['can_add'] = $this->powerChk('leebuyer_signup', '1');
+            }
         }
     }
 
@@ -62,10 +62,18 @@ class Leebuyer_signup_api extends SimpleRest
     }
 
     //取得所有活動
-    public function leebuyer_signup_action_index($only_enable = true)
+    public function leebuyer_signup_actions_index($only_enable = true)
     {
-        $action = Leebuyer_signup_actions::index($only_enable);
-        return $this->encodeJson($action);
+        $actions = Leebuyer_signup_actions::get_all($only_enable);
+        return $this->encodeJson($actions); //變成json格式再return出去
+    }
+
+    //取得活動所有報名資料
+    public function leebuyer_signup_data_index($action_id)
+    {
+        $action = Leebuyer_signup_actions::get($action_id);
+        $data = ($this->user['leebuyer_signup_adm'] || ($this->user['can_add'] && $action['uid'] == $this->uid)) ? Leebuyer_signup_data::get_all($action_id) : [];
+        return $this->encodeJson($data); //變成json格式再return出去
     }
 
 }

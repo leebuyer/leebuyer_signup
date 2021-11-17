@@ -8,7 +8,7 @@ use XoopsModules\Tadtools\Utility;
 function action_signup($options)
 {
     $block = Leebuyer_signup_actions::get($options[0], true);
-    $block['signup'] = Leebuyer_signup_data::get_all($options[0], null, true);
+    $block['signup_count'] = count(Leebuyer_signup_data::get_all($options[0], null, true));
     return $block;
 }
 

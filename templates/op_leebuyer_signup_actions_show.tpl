@@ -1,5 +1,5 @@
 <h2 class="my">
-    <{if $enable && ($number + $candidate) > $signup|@count && $end_date|strtotime >= $smarty.now}>  <!--顯示啟用或關閉圖示-->
+    <{if $enable && ($number + $candidate) > $signup_count && $end_date|strtotime >= $smarty.now}>  <!--顯示啟用或關閉圖示-->
         <i class="fa fa-check text-success" aria-hidden="true"></i>
     <{else}>
         <i class="fa fa-times text-danger" aria-hidden="true"></i>

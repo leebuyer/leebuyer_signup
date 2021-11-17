@@ -22,7 +22,7 @@ $templateProcessor->setValue('action_date', $action['action_date']);
 $templateProcessor->setValue('end_date', $action['end_date']);
 $templateProcessor->setValue('number', $action['number']);
 $templateProcessor->setValue('candidate', $action['candidate']);
-$templateProcessor->setValue('signup', count($signup));
+$templateProcessor->setValue('signup', $action['signup_count']);
 $templateProcessor->setValue('url', XOOPS_URL . "/modules/Leebuyer_signup/index.php?op=Leebuyer_signup_data_create&amp;action_id={$action['id']}");
 
 //已報名名單
