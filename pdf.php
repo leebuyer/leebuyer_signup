@@ -8,7 +8,7 @@ require_once __DIR__ . '/header.php';
 
 //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
 if (!$_SESSION['can_add']) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能！");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 //過濾id
 $id = Request::getInt('id');
@@ -17,11 +17,11 @@ $id = Request::getInt('id');
 $action = Leebuyer_signup_actions::get($id);
 
 if ($action['uid'] != $xoopsUser->uid()) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能！");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 
 $title = $action['title'];
-$html[] = "<h1>【{$title}報名名單】</h1>";
+$html[] = "<h1>{$title}" . _MD_LEEBUYER_SIGNUP_APPLY_LIST . "</h1>";
 $html[] = '<table border="1" cellpadding="3">';
 //標題列
 //$head_row = explode("\n", $action['setup']); //explode() 函數把字符串分割為數組。用換行符號把$action['setup']拆開，會成一陣列
@@ -39,11 +39,11 @@ foreach ($signup as $signup_data) { //$signup_data(是陣列)每一個人一筆�
         $iteam[] = implode('|', $user_data);
     }
     if ($signup_data['accept'] === '1') {
-        $iteam[] = '錄取';
+        $iteam[] = _MD_LEEBUYER_SIGNUP_ACCEPT;
     } elseif ($signup_data['accept'] === '0') {
-        $iteam[] = '未錄取';
+        $iteam[] = _MD_LEEBUYER_SIGNUP_NOT_ACCEPT;
     } else {
-        $iteam[] = '尚未設定';
+        $iteam[] = _MD_LEEBUYER_SIGNUP_ACCEPT_NOT_YET;
     }
     $iteam[] = $signup_data['signup_date'];
     $iteam[] = $signup_data['tag'];

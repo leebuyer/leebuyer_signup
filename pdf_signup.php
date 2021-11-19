@@ -9,7 +9,7 @@ require_once __DIR__ . '/header.php';
 
 //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
 if (!$_SESSION['can_add']) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能！");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 //過濾id
 $id = Request::getInt('id');
@@ -30,11 +30,11 @@ $pdf->AddPage(); //新增頁面，一定要有，否則內容出不來
 //$pdf->Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = 0, $link = nil, $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M')
 //$pdf->MultiCell( $w, $h, $txt, $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false );
 
-$title = "【{$action['title']}簽到表】";
+$title = $action['title'] . _MD_LEEBUYER_SIGNUP_SIGNIN_TABLE;
 $pdf->SetFont('twkai98_1', 'B', 24, '', true); //設定字型
 $pdf->MultiCell(180, 0, $title, 0, "C");
 $pdf->SetFont('twkai98_1', '', 16, '', true); //設定字型
-$pdf->Cell(30, 20, '活動日期：', 0, 0);
+$pdf->Cell(30, 20, _MD_LEEBUYER_SIGNUP_ACTION_DATE . _TAD_FOR, 0, 0);
 $pdf->Cell(140, 20, $action['action_date'], 0, 1);
 
 //儲存資料
@@ -51,11 +51,11 @@ if (empty($col_count)) {
 $h = 15;
 $w = 110 / $col_count;
 $maxh = 15;
-$pdf->Cell(15, $h, '編號', 1, 0, "C");
+$pdf->Cell(15, $h, _MD_LEEBUYER_SIGNUP_ID, 1, 0, "C");
 foreach ($col_arr as $key => $col_name) {
     $pdf->Cell($w, $h, $col_name, 1, 0, "C");
 }
-$pdf->Cell(55, $h, '簽名', 1, 1, "C");
+$pdf->Cell(55, $h, _MD_LEEBUYER_SIGNUP_SIGNIN, 1, 1, "C");
 
 //欄位部分
 $signup = Leebuyer_signup_data::get_all($action['id'], null, true, true);

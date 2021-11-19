@@ -11,11 +11,11 @@ if (!class_exists('XoopsModules\Tadtools\Utility')) {
 }
 
 // 安裝前
-function xoops_module_pre_install_leebuyer_signup(XoopsModule $module) //$module是目前這個模組
+// function xoops_module_pre_install_leebuyer_signup(XoopsModule $module) //$module是目前這個模組
 
-{
+// {
 
-}
+// }
 
 // 安裝後
 function xoops_module_install_leebuyer_signup(XoopsModule $module)
@@ -27,7 +27,7 @@ function xoops_module_install_leebuyer_signup(XoopsModule $module)
     Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/leebuyer_signup/image");
     Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/leebuyer_signup/image/.thumbs");
 
-    $groupid = update::mk_group("活動報名管理");
+    $groupid = update::mk_group(_MI_LEEBUYER_SIGNUP_ADMIN);
 
     $perm_handler = xoops_getHandler('groupperm');
     $perm = $perm_handler->create();

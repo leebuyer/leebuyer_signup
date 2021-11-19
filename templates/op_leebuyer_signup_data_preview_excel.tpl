@@ -1,4 +1,4 @@
-<h2 class="my">匯入【<{$action.title}>】報名資料預覽</h2>
+<h2 class="my"><{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT}>【<{$action.title}>】<{$smarty.const._MD_LEEBUYER_SIGNUP_DATA_PREVIEW}></h2>
 
 <form action="index.php" method="post" id="myForm">
 
@@ -45,7 +45,7 @@
     <input type="hidden" name="op" value="leebuyer_signup_data_import_excel"><!---此要存入TadDataCenter，tdc[<{$i}>][]是二維陣列，$i是第幾筆資料(preview_data)，--->
     <div class="bar">
         <button type="submit" class="btn btn-primary">
-            <i class="fa fa-save" aria-hidden="true"></i> 匯入EXCEL資料
+            <i class="fa fa-save" aria-hidden="true"></i> <{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT}>EXCEL
         </button>
     </div>
 </form>

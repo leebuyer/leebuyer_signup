@@ -17,8 +17,8 @@ $interface_menu[_TAD_TO_MOD] = "index.php";
 $interface_icon[_TAD_TO_MOD] = "fa-chevron-right";
 
 //新增我的報名記錄選單
-$interface_menu['我的報名記錄'] = "my_signup.php";
-$interface_icon['我的報名記錄'] = "fa-chevron-right";
+$interface_menu[_MD_LEEBUYER_SIGNUP_MY_RECORD] = "my_signup.php";
+$interface_icon[_MD_LEEBUYER_SIGNUP_MY_RECORD] = "fa-chevron-right";
 
 //模組後台
 if ($_SESSION[$is_admin]) {

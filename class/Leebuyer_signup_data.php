@@ -38,7 +38,7 @@ class Leebuyer_signup_data
         $db_values = empty($id) ? [] : self::get($id, $uid); //$uid要麻就是空的，不能為零
 
         if ($id and empty($db_values)) {
-            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, "查無報名無資料，無法修改！");
+            redirect_header($_SERVER['PHP_SELF'] . "?id={$action_id}", 3, _MD_LEEBUYER_SIGNUP_CANNOT_BE_MODIFIED);
         }
 
         foreach ($db_values as $col_name => $col_val) {
@@ -66,11 +66,11 @@ class Leebuyer_signup_data
         $signup = Leebuyer_signup_data::get_all($action_id);
 
         if (time() > strtotime($action['end_date'])) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "已報名截止，無法再進行報名或修改報名");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_END);
         } elseif (!$action['enable']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "此報名已關閉，無法再進行報名或修改報名");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_CLOSED);
         } elseif ($action['signup_count'] >= ($action['number'] + $action['candidate']) && $op == 'leebuyer_signup_data_create') { //此判斷搭配op_leebuyer_signup_actions_index.tpl樣板立即報名連結
-            redirect_header($_SERVER['PHP_SELF'], 3, "人數已滿，無法再進行報名");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_FULL);
         }
 
         $xoopsTpl->assign("action", $action); //把活動的陣列送去表單，如此不會後面蓋前面
@@ -127,7 +127,7 @@ class Leebuyer_signup_data
         if (count($action['signup']) > $action['number']) {
             $TadDataCenter->set_col('data_id', $id); //綁定這個值
             //儲存資料
-            $TadDataCenter->saveCustomData(['tag' => ['候補']]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
+            $TadDataCenter->saveCustomData(['tag' => [_MD_LEEBUYER_SIGNUP_CANDIDATE]]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
         }
 
         return $id;
@@ -148,7 +148,7 @@ class Leebuyer_signup_data
         $data = self::get($id, $uid); //資料庫把資料抓出來
 
         if (empty($data)) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "查無報名資料，無法觀看！");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_CANT_WATCH);
         }
 
         $myts = \MyTextSanitizer::getInstance();
@@ -311,7 +311,7 @@ class Leebuyer_signup_data
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "非管理員，您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_NOADM_CANNOT_USE);
         }
 
         $id = (int) $id;
@@ -344,7 +344,7 @@ class Leebuyer_signup_data
     }
 
     //立即寄出(只純脆將信寄出)
-    public static function send($title = "無標題", $content = "無內容", $email = "")
+    public static function send($title = _MD_LEEBUYER_SIGNUP_NO_TITLE, $content = _MD_LEEBUYER_SIGNUP_NO_CONTENT, $email = "")
     {
         global $xoopsUser;
         if (empty($email)) {
@@ -364,7 +364,7 @@ class Leebuyer_signup_data
 
         $id = (int) $id;
         if (empty($id)) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "沒有編號，無法寄出通知信！");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_UNABLE_TO_SEND);
         }
 
         $signup = $signup ? $signup : self::get($id);
@@ -380,25 +380,25 @@ class Leebuyer_signup_data
         $adm_email = $admUser->email(); //得到email
 
         if ($type == 'destroy') {
-            $title = "【{$action['title']}】取消報名通知";
-            $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}取消報名！</p>";
-            $foot = "欲重新報名，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_create&action_id={$action['id']}";
+            $title = sprintf(_MD_LEEBUYER_SIGNUP_DESTROY_TITLE, $action['title']);
+            $head = sprintf(_MD_LEEBUYER_SIGNUP_DESTROY_HEAD, $signup['signup_date'], $action['title'], $now, $name);
+            $foot = _MD_LEEBUYER_SIGNUP_DESTROY_FOOT . XOOPS_URL . "/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_create&action_id={$action['id']}";
         } elseif ($type == 'store') {
-            $title = "【{$action['title']}】報名完成通知";
-            $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}完成報名！</p>";
-            $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
+            $title = sprintf(_MD_LEEBUYER_SIGNUP_STORE_TITLE, $action['title']);
+            $head = sprintf(_MD_LEEBUYER_SIGNUP_STORE_HEAD, $signup['signup_date'], $action['title'], $now, $name);
+            $foot = _MD_LEEBUYER_SIGNUP_FOOT . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
         } elseif ($type == 'update') {
-            $title = "【{$action['title']}】修改報名通知";
-            $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已於{$now}由{$name}修改報名通知如下！</p>";
-            $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
+            $title = sprintf(_MD_LEEBUYER_SIGNUP_UPDATE_TITLE, $action['title']);
+            $head = sprintf(_MD_LEEBUYER_SIGNUP_UPDATE_HEAD, $signup['signup_date'], $action['title'], $now, $name);
+            $foot = _MD_LEEBUYER_SIGNUP_FOOT . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
         } elseif ($type == 'accept') {
-            $title = "【{$action['title']}】報名錄取狀況通知";
+            $title = sprintf(_MD_LEEBUYER_SIGNUP_ACCEPT_TITLE, $action['title']);
             if ($signup['accept'] == 1) {
-                $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已通過審核，<h2 style='color:#e699f2'>恭喜錄取！</h2></p>";
+                $head = sprintf(_MD_LEEBUYER_SIGNUP_ACCEPT_HEAD1, $signup['signup_date'], $action['title']);
             } else {
-                $head = "<p>您於{$signup['signup_date']}報名了【{$action['title']}】活動已審核，很遺憾的通知您，因名額有限，</p><span style='color:red;'>您並未錄取！</span>";
+                $head = sprintf(_MD_LEEBUYER_SIGNUP_ACCEPT_HEAD0, $signup['signup_date'], $action['title']);
             }
-            $foot = "完整詳情，請連至" . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
+            $foot = _MD_LEEBUYER_SIGNUP_FOOT . XOOPS_URL . "/modules/leebuyer_signup/index.php?id={$signup['action_id']}";
 
             //取得報名者的編號
             $signupUser = $member_handler->getUser($signup['uid']);
@@ -409,7 +409,7 @@ class Leebuyer_signup_data
 
         //寄信失敗秀出訊息
         if (!self::send($title, $content, $email)) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "通知信寄發失敗！");
+            redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_FAILED_TO_SEND);
         }
         //寄信給管理員
         self::send($title, $content, $adm_email);
@@ -471,7 +471,7 @@ class Leebuyer_signup_data
         <body>
         $head
         <h2>{$action['title']}</h2>
-        <div>活動日期：{$action['action_date']}</div>
+        <div>" . _MD_LEEBUYER_SIGNUP_ACTION_DATE . _TAD_FOR . "{$action['action_date']}</div>
         <div class='well'>{$action['detail']}</div>
         $table
         $foot
@@ -488,7 +488,7 @@ class Leebuyer_signup_data
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $action = Leebuyer_signup_actions::get($action_id);
@@ -502,7 +502,7 @@ class Leebuyer_signup_data
 
         //抓取內容
         $preview_data = [];
-        $handle = fopen($_FILES['csv']['tmp_name'], "r") or die("無法開啟"); //在樣板檔的input表單輸入框<input type="file" name="csv" class="form-control" accept="text/csv">此地$_FILES['csv']也要寫csv
+        $handle = fopen($_FILES['csv']['tmp_name'], "r") or die(_MD_LEEBUYER_SIGNUP_UNABLE_TO_OPEN); //在樣板檔的input表單輸入框<input type="file" name="csv" class="form-control" accept="text/csv">此地$_FILES['csv']也要寫csv
         while (($val = fgetcsv($handle, 1000)) !== false) {
             $preview_data[] = mb_convert_encoding($val, 'UTF-8', 'big5'); //轉碼
         }
@@ -527,7 +527,7 @@ class Leebuyer_signup_data
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $action_id = (int) $action_id;
@@ -564,7 +564,7 @@ class Leebuyer_signup_data
             if (count($action['signup']) > $action['number']) {
                 $TadDataCenter->set_col('data_id', $id); //綁定這個值
                 //儲存資料
-                $TadDataCenter->saveCustomData(['tag' => ['候補']]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
+                $TadDataCenter->saveCustomData(['tag' => [_MD_LEEBUYER_SIGNUP_CANDIDATE]]); //存入那個資料的name是tag此標籤，值是候補。此['tag' => ['候補']]是陣列，亦可加入其他東西
             }
 
         }
@@ -577,7 +577,7 @@ class Leebuyer_signup_data
 
         //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
         if (!$_SESSION['can_add']) {
-            redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+            redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
         }
 
         $action = Leebuyer_signup_actions::get($action_id);
@@ -654,9 +654,9 @@ class Leebuyer_signup_data
         }
 
         if (!$only_tdc) {
-            $head[] = '錄取';
-            $head[] = '報名日期';
-            $head[] = '身份';
+            $head[] = _MD_LEEBUYER_SIGNUP_ACCEPT;
+            $head[] = _MD_LEEBUYER_SIGNUP_APPLY_DATE;
+            $head[] = _MD_LEEBUYER_SIGNUP_IDENTITY;
         }
 
         if ($return_type) {

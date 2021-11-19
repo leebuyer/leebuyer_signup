@@ -51,7 +51,7 @@ class Leebuyer_signup_api extends SimpleRest
     {
         if (empty($responseData)) {
             $statusCode = 404;
-            $responseData = array('error' => '無資料');
+            $responseData = array('error' => _TAD_EMPTY);
         } else {
             $statusCode = 200;
         }

@@ -22,7 +22,7 @@ function xoops_module_pre_update_leebuyer_signup(XoopsModule $module, $old_versi
     Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/leebuyer_signup/image/.thumbs");
 
     $gperm_handler = xoops_getHandler('groupperm');
-    $groupid = Update::mk_group("活動報名管理");
+    $groupid = Update::mk_group(_MD_LEEBUYER_SIGNUP_ADMIN);
 
     if (!$gperm_handler->checkRight($module->dirname(), 1, $groupid, $module->mid())) { //在tadtools/class/power_chk()函數內會用到內鍵的工具checkRight()。判斷此模組1號權限,對此群組是否有執行?是否有權限?如果沒有做下面動作。如此在xx_group_permission資料表每更新一次就會多一筆資料
         $perm_handler = xoops_getHandler('groupperm');

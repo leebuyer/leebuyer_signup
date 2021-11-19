@@ -8,7 +8,7 @@ require_once __DIR__ . '/header.php';
 
 //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
 if (!$_SESSION['can_add']) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能！");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 //過濾id
 $id = Request::getInt('id');
@@ -19,7 +19,7 @@ $type = Request::getString('type');
 $action = Leebuyer_signup_actions::get($id);
 
 if ($action['uid'] != $xoopsUser->uid()) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能！");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 
 $csv = [];
@@ -37,11 +37,11 @@ if ($type == 'signup') {
             $iteam[] = implode('|', $user_data);
         }
         if ($signup_data['accept'] === '1') {
-            $iteam[] = '錄取';
+            $iteam[] = _MD_LEEBUYER_SIGNUP_ACCEPT;
         } elseif ($signup_data['accept'] === '0') {
-            $iteam[] = '未錄取';
+            $iteam[] = _MD_LEEBUYER_SIGNUP_NOT_ACCEPT;
         } else {
-            $iteam[] = '尚未設定';
+            $iteam[] = _MD_LEEBUYER_SIGNUP_ACCEPT_NOT_YET;
         }
         $iteam[] = $signup_data['signup_date'];
         $iteam[] = $signup_data['tag'];
@@ -54,7 +54,7 @@ $content = implode("\n", $csv); //用換行符號把陣列組合起來
 $content = mb_convert_encoding($content, 'big5'); //轉碼成big5
 
 header("Content-type: text/csv");
-header("Content-Disposition: attachment; filename= {$action['title']}報名名單.csv");
+header("Content-Disposition: attachment; filename= {$action['title']}" . _MD_LEEBUYER_SIGNUP_ACCEPT_NOT_YET . ".csv");
 
 echo $content;
 exit;

@@ -11,7 +11,7 @@ require_once __DIR__ . '/header.php';
 
 //防止網址輸入觀看表單之轉向，配合$uid = $xoopsUser ? $xoopsUser->uid() : 0;才不致報錯
 if (!$_SESSION['can_add']) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能！");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 //過濾id
 $id = Request::getInt('id');
@@ -58,11 +58,11 @@ $sectionStyle->setMarginTop(Converter::cmToTwip(2.5));
 $sectionStyle->setMarginLeft(Converter::cmToTwip(2.2));
 $sectionStyle->setMarginRight(Converter::cmToTwip(2.2));
 
-$title = "【{$action['title']}簽到表】";
+$title = $action['title'] . _MD_LEEBUYER_SIGNUP_SIGNIN_TABLE;
 
 $section->addTitle($title, 1); //新增標題
 $section->addTextBreak(1); //換行，可指定換幾行
-$section->addText("活動日期:{$action['action_date']}", $fontStyle, $left_paraStyle);
+$section->addText(_MD_LEEBUYER_SIGNUP_ACTION_DATE . _TAD_FOR . $action['action_date'], $fontStyle, $left_paraStyle);
 
 $section->addTextBreak(1); //換行，可指定換幾行
 //儲存資料

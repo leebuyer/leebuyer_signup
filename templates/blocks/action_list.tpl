@@ -3,14 +3,14 @@
     <{foreach from=$block item=action}>
         <li class="list-group-item">
             <span class="badge badge-success"><{$action.action_date|substr:0:-3}></span>
-            <small>名額<{$action.number}>
-                <{if $action.candidate}><span data-toggle="tooltip" title="可候補名額">(<{$action.candidate}>)</span><{/if}>
-                人，已報名<{$action.signup_count}>人</small>
+            <small><{$smarty.const._MB_LEEBUYER_SIGNUP_QUOTA}><{$action.number}>
+                <{if $action.candidate}><span data-toggle="tooltip" title="<{$smarty.const._MB_LEEBUYER_SIGNUP_CANDIDATES_QUOTA}>">(<{$action.candidate}>)</span><{/if}>
+                <{$smarty.const._MB_LEEBUYER_SIGNUP_PEOPLE}>  <{$smarty.const._MB_LEEBUYER_SIGNUP_APPLIED}><{$action.signup_count}><{$smarty.const._MB_LEEBUYER_SIGNUP_PEOPLE}></small>
             <div>
                 <{if $action.enable && ($action.number + $action.candidate) > $action.signup_count && $action.end_date|strtotime >= $smarty.now}>
-                    <i class="fa fa-check text-success" data-toggle="tooltip" title="報名中" aria-hidden="true"></i>
+                    <i class="fa fa-check text-success" data-toggle="tooltip" title="<{$smarty.const._MB_LEEBUYER_SIGNUP_IN_PROGRESS}>" aria-hidden="true"></i>
                 <{else}>
-                    <i class="fa fa-times text-danger" data-toggle="tooltip" title="無法報名" aria-hidden="true"></i>
+                    <i class="fa fa-times text-danger" data-toggle="tooltip" title="<{$smarty.const._MB_LEEBUYER_SIGNUP_CANT_APPLY}>" aria-hidden="true"></i>
                 <{/if}>
                 <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?id=<{$action.id}>"><{$action.title}></a>
             </div>

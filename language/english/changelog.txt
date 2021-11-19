@@ -1,5 +1,5 @@
-XOOPS2.5 Demo modules 1.0 （2018/03/10 release）
+XOOPS2.5 Blank Example Module 1.0 (Released 2021/12/31)
 ===========================================
-1.fix xoops_version.php
-2.add $xoopsTpl
-3.add bootstrap
+1. fix non-existent language in xoops_version.php
+2. add usage of $xoopsTpl
+3. add bootstrap support

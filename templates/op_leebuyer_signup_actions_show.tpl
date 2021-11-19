@@ -5,7 +5,7 @@
         <i class="fa fa-times text-danger" aria-hidden="true"></i>
     <{/if}>
     <{$title}>
-    <small>fa <i class="fa fa-calendar" aria-hidden="true"></i>活動日期:<{$action_date}></small>
+    <small>fa <i class="fa fa-calendar" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_ACTION_DATE}><{$smarty.const._TAD_FOR}><{$action_date}></small>
 </h2>
 
 <div class="alert alert-info">
@@ -27,11 +27,11 @@
 
 
 <h4 class="my">
-    已報名資料
+    <{$smarty.const._MD_LEEBUYER_SIGNUP_APPLIED_DATA}>
     <small>
-        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>報名截止日期:<{$end_date}>
-        <i class="fa fa-users" aria-hidden="true"></i>報名人數上限:<{$number}>
-        <{if $candidate}><span data-toggle="tooltip" title="可候補名額">(<{$candidate}>)</span><{/if}>
+        <i class="fa fa-calendar-check-o" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_END_DATE_COL}><{$smarty.const._TAD_FOR}><{$end_date}>
+        <i class="fa fa-users" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_APPLY_MAX}><{$smarty.const._TAD_FOR}><{$number}>
+        <{if $candidate}><span data-toggle="tooltip" title="<{$smarty.const._MD_LEEBUYER_SIGNUP_CANDIDATES_QUOTA}>">(<{$candidate}>)</span><{/if}>
     </small>
 </h4>
 
@@ -42,8 +42,8 @@
         <th data-sortable="true" nowrap class="c"><{$title}></th>
             <{/foreach}>
 
-            <th data-sortable="true" nowrap class="c">錄取</th>
-            <th data-sortable="true" nowrap class="c">報名日期</th>
+            <th data-sortable="true" nowrap class="c"><{$smarty.const._MD_LEEBUYER_SIGNUP_ACCEPT}></th>
+            <th data-sortable="true" nowrap class="c"><{$smarty.const._MD_LEEBUYER_SIGNUP_APPLY_LIST}></th>
         </tr>
     </thead>
     <tbody>
@@ -61,7 +61,7 @@
                         <{else}>
                             <div>
                                 <!---有登入但這筆資料不是我的--->
-                                <{if strpos($title, '姓名')!==false}>    <!---strpos()函數返回字符串在另一個字符串中第一次出現的位置。如果沒有找到該字符串，則返回 false。此例是在$col_name內找姓名，假如姓名有的話就取代，不是姓名就****--->
+                                <{if strpos($title, $smarty.const._MD_LEEBUYER_SIGNUP_NAME) !==false}>    <!---strpos()函數返回字符串在另一個字符串中第一次出現的位置。如果沒有找到該字符串，則返回 false。此例是在$col_name內找姓名，假如姓名有的話就取代，不是姓名就****--->
                                     <{if preg_match("/[a-z]/i", $user_data.0)}>
                                         <{$user_data.0|regex_replace:"/[a-z]/":"*"}>
                                     <{else}>
@@ -78,20 +78,20 @@
 
                     <td>
                         <{if $signup_data.accept==='1'}>
-                            <div class="text-primary">錄取</div>
+                            <div class="text-primary"><{$smarty.const._MD_LEEBUYER_SIGNUP_ACCEPT}></div>
                             <{if $smarty.session.can_add && $uid == $now_uid}>
-                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">改成未錄取</a>
+                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning"><{$smarty.const._MD_LEEBUYER_SIGNUP_CHANGE_TO}><{$smarty.const._MD_LEEBUYER_SIGNUP_NOT_ACCEPT}></a>
                             <{/if}>
                         <{elseif $signup_data.accept==='0'}>
-                            <div class="text-danger">未錄取</div>
+                            <div class="text-danger"><{$smarty.const._MD_LEEBUYER_SIGNUP_NOT_ACCEPT}></div>
                             <{if $smarty.session.can_add && $uid == $now_uid}>
-                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">改成錄取</a>
+                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success"><{$smarty.const._MD_LEEBUYER_SIGNUP_CHANGE_TO}><{$smarty.const._MD_LEEBUYER_SIGNUP_ACCEPT}></a>
                             <{/if}>
                         <{else}>
-                            <div class="text-muted">尚未審定</div>
+                            <div class="text-muted"><{$smarty.const._MD_LEEBUYER_SIGNUP_ACCEPT_NOT_YET}></div>
                             <{if $smarty.session.can_add && $uid == $now_uid}>
-                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning">未錄取</a>
-                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success">錄取</a>
+                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=0" class="btn btn-sm btn-warning"><{$smarty.const._MD_LEEBUYER_SIGNUP_NOT_ACCEPT}></a>
+                                <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_accept&id=<{$signup_data.id}>&action_id=<{$id}>&accept=1" class="btn btn-sm btn-success"><{$smarty.const._MD_LEEBUYER_SIGNUP_ACCEPT}></a>
                             <{/if}>
                         <{/if}>
                     </td>
@@ -125,14 +125,14 @@
 
 <{if $smarty.session.can_add && $uid == $now_uid}>
     <div class="bar">
-        <a href="javascript:del_action('<{$id}>')" class="btn  btn-sm btn-danger"><i class="fa fa-times" aria-hidden="true"></i>刪除活動</a>
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn  btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i>編輯活動</a>
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/html.php?id=<{$id}>" class="btn  btn-sm btn-primary"><i class="fa fa-html5" aria-hidden="true"></i>匯出HTML</a>
+        <a href="javascript:del_action('<{$id}>')" class="btn  btn-sm btn-danger"><i class="fa fa-times" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_DESTROY_ACTION}></a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_actions_edit&id=<{$id}>" class="btn  btn-sm btn-warning"><i class="fa fa-pencil" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_EDIT_ACTION}></a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/html.php?id=<{$id}>" class="btn  btn-sm btn-primary"><i class="fa fa-html5" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_EXPORT_HTML}></a>
 
-        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_pdf_setup&id=<{$id}>" class="btn  btn-sm btn-info"><i class="fa fa-save" aria-hidden="true"></i>產生簽到表</a>
+        <a href="<{$xoops_url}>/modules/leebuyer_signup/index.php?op=leebuyer_signup_data_pdf_setup&id=<{$id}>" class="btn  btn-sm btn-info"><i class="fa fa-save" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_EXPORT_SIGNIN_TABLE}></a>
 
         <div class="btn-group" role="group" aria-label="Basic example">
-            <a href="#" class="btn  btn-sm btn-secondary"><i class="fa fa-file-text-o" aria-hidden="true"></i>匯出報名名單</a>
+            <a href="#" class="btn  btn-sm btn-secondary"><i class="fa fa-file-text-o" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_EXPORT_APPLY_LIST}></a>
             <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>&type=signup" class="btn btn-sm btn-info border-left"><i class="fa fa-file-o" aria-hidden="true"></i>CSV</a>
             <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>&type=signup" class="btn btn-sm btn-success border-left"><i class="fa fa-file-excel-o" aria-hidden="true"></i>EXCEL</a>
             <a href="<{$xoops_url}>/modules/leebuyer_signup/pdf.php?id=<{$id}>" class="btn btn-sm btn-danger border-left"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>PDF</a>
@@ -143,14 +143,14 @@
     <form action="index.php" method="post" id="myForm" enctype="multipart/form-data">
         <div class="input-group">
             <div class="input-group-prepend input-group-addon">
-                <span class="input-group-text">匯入報名名單【CSV】</span>
+                <span class="input-group-text"><{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT_APPLY_LIST}>【CSV】</span>
             </div>
             <input type="file" name="csv" class="form-control" accept="text/csv">
             <div class="input-group-append input-group-btn">
                 <input type="hidden" name="id" value=<{$id}>>
                 <input type="hidden" name="op" value="leebuyer_signup_data_preview_csv"><!---要到index.php加入流程leebuyer_signup_data_preview_csv--->
-                <button type="submit" class="btn btn-primary">匯入CSV</button>
-                <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>" class="btn btn-secondary border-left"><i class="fa fa-file-o" aria-hidden="true"></i>下載CSV匯入格式檔</a>
+                <button type="submit" class="btn btn-primary"><{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT}>CSV</button>
+                <a href="<{$xoops_url}>/modules/leebuyer_signup/csv.php?id=<{$id}>" class="btn btn-secondary border-left"><i class="fa fa-file-o" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_DOWNLOAD}>CSV<{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT_FILE}></a>
             </div>
         </div>
     </form>
@@ -158,14 +158,14 @@
     <form action="index.php" method="post" id="myForm" enctype="multipart/form-data" class="my-1">
         <div class="input-group">
             <div class="input-group-prepend input-group-addon">
-                <span class="input-group-text">匯入報名名單【EXCEL】</span>
+                <span class="input-group-text"><{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT_APPLY_LIST}>【EXCEL】</span>
             </div>
             <input type="file" name="excel" class="form-control" accept=".xlsx">
             <div class="input-group-append input-group-btn">
                 <input type="hidden" name="id" value=<{$id}>>
                 <input type="hidden" name="op" value="leebuyer_signup_data_preview_excel"><!---要到index.php加入流程leebuyer_signup_data_preview_csv--->
-                <button type="submit" class="btn btn-primary">匯入EXCEL</button>
-                <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>" class="btn btn-secondary border-left"><i class="fa fa-file-excel-o" aria-hidden="true"></i>下載EXCEL匯入格式檔</a>
+                <button type="submit" class="btn btn-primary"><{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT}>EXCEL</button>
+                <a href="<{$xoops_url}>/modules/leebuyer_signup/excel.php?id=<{$id}>" class="btn btn-secondary border-left"><i class="fa fa-file-excel-o" aria-hidden="true"></i><{$smarty.const._MD_LEEBUYER_SIGNUP_DOWNLOAD}>EXCEL<{$smarty.const._MD_LEEBUYER_SIGNUP_IMPORT_FILE}></a>
             </div>
         </div>
     </form>

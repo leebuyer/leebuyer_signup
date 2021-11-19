@@ -39,7 +39,7 @@ switch ($op) {
     case 'leebuyer_signup_actions_store':
         $id = Leebuyer_signup_actions::store();
         //header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "成功建立活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MD_LEEBUYER_SIGNUP_STORE_SUCCESS);
         exit;
 
     //修改用表單
@@ -52,14 +52,14 @@ switch ($op) {
     case 'leebuyer_signup_actions_update':
         Leebuyer_signup_actions::update($id);
         //header("location: {$_SERVER['PHP_SELF']}?id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, "已成功修改活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$id", 3, _MD_LEEBUYER_SIGNUP_UPDATE_SUCCESS);
         exit;
 
     //刪除資料
     case 'leebuyer_signup_actions_destroy':
         Leebuyer_signup_actions::destroy($id);
         //header("location: {$_SERVER['PHP_SELF']}");
-        redirect_header($_SERVER['PHP_SELF'], 3, "已成功刪除活動！");
+        redirect_header($_SERVER['PHP_SELF'], 3, _MD_LEEBUYER_SIGNUP_DESTROY_SUCCESS);
         exit;
 
     //新增報名表單
@@ -72,7 +72,7 @@ switch ($op) {
         $id = Leebuyer_signup_data::store();
         Leebuyer_signup_data::mail($id, 'store');
         //header("location: {$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id");
-        redirect_header("{$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id", 3, "已成功新增報名！");
+        redirect_header("{$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id", 3, _MD_LEEBUYER_SIGNUP_APPLY_SUCCESS);
         exit;
 
     //顯示報名表
@@ -91,7 +91,7 @@ switch ($op) {
         Leebuyer_signup_data::update($id);
         Leebuyer_signup_data::mail($id, 'update'); //先寄信完再轉向
         //header("location: {$_SERVER['PHP_SELF']}?op=leebuyer_signup_data_show&id=$id");
-        redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_data_show&id=$id", 3, "已成功修改報名資料！");
+        redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_data_show&id=$id", 3, _MD_LEEBUYER_SIGNUP_APPLY_UPDATE_SUCCESS);
         exit;
 
     //刪除報名資料
@@ -101,20 +101,20 @@ switch ($op) {
         Leebuyer_signup_data::destroy($id); //取得完之後就可刪除
         Leebuyer_signup_data::mail($id, 'destroy', $signup);
         //header("location: {$_SERVER['PHP_SELF']?id=$action_id}");
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功刪除報名資料！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, _MD_LEEBUYER_SIGNUP_APPLY_DESTROY_SUCCESS);
         exit;
 
     //更改錄取狀態
     case 'leebuyer_signup_data_accept':
         Leebuyer_signup_data::accept($id, $accept);
         Leebuyer_signup_data::mail($id, 'accept');
-        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, "已成功設定錄取狀態！");
+        redirect_header($_SERVER['PHP_SELF'] . "?id=$action_id", 3, _MD_LEEBUYER_SIGNUP_ACCEPT_SUCCESS);
         exit;
 
     //複製活動
     case 'leebuyer_signup_actions_copy':
         $new_id = Leebuyer_signup_actions::copy($id);
-        redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_actions_edit&id=$new_id", 3, "已成功複製活動！");
+        redirect_header($_SERVER['PHP_SELF'] . "?op=leebuyer_signup_actions_edit&id=$new_id", 3, _MD_LEEBUYER_SIGNUP_COPY_SUCCESS);
         exit;
 
     //修改預覽報名表單(csv)
@@ -125,7 +125,7 @@ switch ($op) {
     //批次匯入csv
     case 'leebuyer_signup_data_import_csv':
         Leebuyer_signup_data::import_csv($id);
-        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "已成功匯入報名資料！");
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, _MD_LEEBUYER_SIGNUP_IMPORT_SUCCESS);
         exit;
 
     //修改預覽報名表單(excel)
@@ -136,7 +136,7 @@ switch ($op) {
     //批次匯入excel
     case 'leebuyer_signup_data_import_excel':
         Leebuyer_signup_data::import_excel($id);
-        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, "已成功匯入報名資料！");
+        redirect_header("{$_SERVER['PHP_SELF']}?id=$id", 3, _MD_LEEBUYER_SIGNUP_IMPORT_SUCCESS);
         break;
 
     //進行pdf的匯出設定

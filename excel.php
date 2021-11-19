@@ -6,7 +6,7 @@ use XoopsModules\Leebuyer_signup\Leebuyer_signup_data;
 require_once __DIR__ . '/header.php';
 
 if (!$_SESSION['can_add']) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 
 $id = Request::getInt('id');
@@ -14,7 +14,7 @@ $type = Request::getString('type');
 
 $action = Leebuyer_signup_actions::get($id);
 if ($action['uid'] != $xoopsUser->uid()) {
-    redirect_header($_SERVER['PHP_SELF'], 3, "您沒有權限使用此功能");
+    redirect_header($_SERVER['PHP_SELF'], 3, _TAD_PERMISSION_DENIED);
 }
 
 require_once XOOPS_ROOT_PATH . '/modules/tadtools/vendor/phpoffice/phpexcel/Classes/PHPExcel.php'; //引入 PHPExcel 物件庫
@@ -28,7 +28,7 @@ $head_style = [
         'bold' => true,
         'color' => ['rgb' => '000000'],
         // 'size' => 12,
-        'name' => '新細明體',
+        'name' => 'PMingLiU',
     ],
     'alignment' => [
         'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -51,7 +51,7 @@ $content_style = [
         'bold' => false,
         'color' => ['rgb' => '000000'],
         // 'size' => 12,
-        'name' => '新細明體',
+        'name' => 'PMingLiU',
     ],
     'alignment' => [
         'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -69,7 +69,7 @@ $content_style = [
     ],
 ];
 
-$title = "{$action['title']}報名名單";
+$title = $action['title'] . _MD_LEEBUYER_SIGNUP_APPLY_LIST;
 $objPHPExcel->setActiveSheetIndex(0); //設定預設顯示的工作表
 $objActSheet = $objPHPExcel->getActiveSheet(); //指定預設工作表為 $objActSheet
 $objActSheet->setTitle($title); //設定標題
@@ -99,11 +99,11 @@ if ($type == 'signup') {
         }
 
         if ($signup_data['accept'] === '1') {
-            $iteam[] = '錄取';
+            $iteam[] = _MD_LEEBUYER_SIGNUP_ACCEPT;
         } elseif ($signup_data['accept'] === '0') {
-            $iteam[] = '未錄取';
+            $iteam[] = _MD_LEEBUYER_SIGNUP_NOT_ACCEPT;
         } else {
-            $iteam[] = '尚未設定';
+            $iteam[] = _MD_LEEBUYER_SIGNUP_ACCEPT_NOT_YET;
         }
         $iteam[] = $signup_data['signup_date'];
         $iteam[] = $signup_data['tag'];
