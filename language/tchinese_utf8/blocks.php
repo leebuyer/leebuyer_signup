@@ -1,5 +1,5 @@
 <?php
-
+xoops_loadLanguage('admin_common', 'tadtools');
 // blocks\action_list.php
 define('_MB_LEEBUYER_SIGNUP_SHOW_ACTIONS_NUMBER', '顯示活動數');
 define('_MB_LEEBUYER_SIGNUP_ORDER_BY', '排序依據');

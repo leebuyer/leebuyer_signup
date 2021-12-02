@@ -41,7 +41,6 @@ define('_MD_LEEBUYER_SIGNUP_MY_RECORD', '我的報名紀錄');
 define('_MD_LEEBUYER_SIGNUP_SIGNIN_TABLE', '簽到表');
 define('_MD_LEEBUYER_SIGNUP_SIGNIN', '簽名');
 define('_MD_LEEBUYER_SIGNUP_ACTION_SETTING', '活動設定');
-define('_MD_LEEBUYER_SIGNUP_TITLE', '活動標題');
 define('_MD_LEEBUYER_SIGNUP_KEYIN', '請輸入');
 define('_MD_LEEBUYER_SIGNUP_ACTION_LIST', '活動列表');
 define('_MD_LEEBUYER_SIGNUP_IN_PROGRESS', '報名中');

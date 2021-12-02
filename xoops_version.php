@@ -73,7 +73,7 @@ $modversion['blocks'][] = [
 
 $modversion['blocks'][] = [
     'file' => 'action_signup.php',
-    'name' => _MI_LEE_MI_LEEBUYER_SIGNUP_ACTION_SIGNUP_DESCRIPTION,
+    'name' => _MI_LEEBUYER_SIGNUP_ACTION_SIGNUP_DESCRIPTION,
     'show_func' => 'action_signup',
     'template' => 'action_signup.tpl',
     'edit_func' => 'action_signup_edit',
